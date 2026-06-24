@@ -9,4 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface
+public interface VehicleBrandRepository extends JpaRepository<VehicleBrand, VehicleBrandId> {
+
+    List<VehicleBrand> findAll();
+
+}
