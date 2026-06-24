@@ -1,44 +1,41 @@
 package com.example.app.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "GATA_VEHIMODE")
+@Table(name = "VEHICLE_MODEL")
 @IdClass(VehicleModelId.class)
-public class VehicleModel {
+public class VehicleModel implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "FCVEHICATA")
+    @Column(name = "CATALOG_DATE")
+    @Temporal(TemporalType.DATE)
     private Date catalogDate;
 
     @Id
-    @Column(name = "CDVEHITIPO")
+    @Column(name = "VEHICLE_TYPE_CODE", length = 10)
     private String vehicleTypeCode;
 
     @Id
-    @Column(name = "CDVEHIMARC")
+    @Column(name = "VEHICLE_BRAND_CODE", length = 10)
     private String vehicleBrandCode;
 
     @Id
-    @Column(name = "CDVEHIMODE")
+    @Column(name = "VEHICLE_MODEL_CODE", length = 20)
     private String vehicleModelCode;
 
-    @Column(name = "DSABREV_MODELO")
+    @Column(name = "VEHICLE_MODEL_ABBREVIATION", length = 100)
     private String vehicleModelAbbreviation;
 
-    @Column(name = "DSVEHIMODE")
-    private String vehicleModelDescription;
-
-    @Column(name = "NMCILINDCC")
+    @Column(name = "ENGINE_DISPLACEMENT_CC")
     private Integer engineDisplacementCc;
 
-    @Column(name = "PTCATALOGO")
+    @Column(name = "CATALOG_VALUE", precision = 15, scale = 2)
     private BigDecimal catalogValue;
 
     public VehicleModel() {
@@ -82,14 +79,6 @@ public class VehicleModel {
 
     public void setVehicleModelAbbreviation(String vehicleModelAbbreviation) {
         this.vehicleModelAbbreviation = vehicleModelAbbreviation;
-    }
-
-    public String getVehicleModelDescription() {
-        return vehicleModelDescription;
-    }
-
-    public void setVehicleModelDescription(String vehicleModelDescription) {
-        this.vehicleModelDescription = vehicleModelDescription;
     }
 
     public Integer getEngineDisplacementCc() {

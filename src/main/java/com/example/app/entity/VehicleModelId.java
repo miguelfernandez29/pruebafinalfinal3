@@ -1,8 +1,8 @@
 package com.example.app.entity;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Date;
+import java.util.Objects;
 
 public class VehicleModelId implements Serializable {
 
@@ -61,9 +61,9 @@ public class VehicleModelId implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         VehicleModelId that = (VehicleModelId) o;
         return Objects.equals(catalogDate, that.catalogDate) &&
-                Objects.equals(vehicleTypeCode, that.vehicleTypeCode) &&
-                Objects.equals(vehicleBrandCode, that.vehicleBrandCode) &&
-                Objects.equals(vehicleModelCode, that.vehicleModelCode);
+               Objects.equals(vehicleTypeCode, that.vehicleTypeCode) &&
+               Objects.equals(vehicleBrandCode, that.vehicleBrandCode) &&
+               Objects.equals(vehicleModelCode, that.vehicleModelCode);
     }
 
     @Override
