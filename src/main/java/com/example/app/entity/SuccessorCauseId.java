@@ -11,19 +11,19 @@ public class SuccessorCauseId implements Serializable {
     private String taxType;
     private String presentationCode;
     private String taxpayerNif;
-    private String successorNif;
-    private String successorSubsequence;
+    private String heirNif;
+    private String heirSubsequence;
 
-    public SuccessorCauseId() {
-    }
+    public SuccessorCauseId() {}
 
-    public SuccessorCauseId(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif, String successorNif, String successorSubsequence) {
+    public SuccessorCauseId(Integer presentationYear, String taxType, String presentationCode,
+                            String taxpayerNif, String heirNif, String heirSubsequence) {
         this.presentationYear = presentationYear;
         this.taxType = taxType;
         this.presentationCode = presentationCode;
         this.taxpayerNif = taxpayerNif;
-        this.successorNif = successorNif;
-        this.successorSubsequence = successorSubsequence;
+        this.heirNif = heirNif;
+        this.heirSubsequence = heirSubsequence;
     }
 
     public Integer getPresentationYear() {
@@ -58,20 +58,20 @@ public class SuccessorCauseId implements Serializable {
         this.taxpayerNif = taxpayerNif;
     }
 
-    public String getSuccessorNif() {
-        return successorNif;
+    public String getHeirNif() {
+        return heirNif;
     }
 
-    public void setSuccessorNif(String successorNif) {
-        this.successorNif = successorNif;
+    public void setHeirNif(String heirNif) {
+        this.heirNif = heirNif;
     }
 
-    public String getSuccessorSubsequence() {
-        return successorSubsequence;
+    public String getHeirSubsequence() {
+        return heirSubsequence;
     }
 
-    public void setSuccessorSubsequence(String successorSubsequence) {
-        this.successorSubsequence = successorSubsequence;
+    public void setHeirSubsequence(String heirSubsequence) {
+        this.heirSubsequence = heirSubsequence;
     }
 
     @Override
@@ -80,15 +80,15 @@ public class SuccessorCauseId implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         SuccessorCauseId that = (SuccessorCauseId) o;
         return Objects.equals(presentationYear, that.presentationYear) &&
-                Objects.equals(taxType, that.taxType) &&
-                Objects.equals(presentationCode, that.presentationCode) &&
-                Objects.equals(taxpayerNif, that.taxpayerNif) &&
-                Objects.equals(successorNif, that.successorNif) &&
-                Objects.equals(successorSubsequence, that.successorSubsequence);
+               Objects.equals(taxType, that.taxType) &&
+               Objects.equals(presentationCode, that.presentationCode) &&
+               Objects.equals(taxpayerNif, that.taxpayerNif) &&
+               Objects.equals(heirNif, that.heirNif) &&
+               Objects.equals(heirSubsequence, that.heirSubsequence);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(presentationYear, taxType, presentationCode, taxpayerNif, successorNif, successorSubsequence);
+        return Objects.hash(presentationYear, taxType, presentationCode, taxpayerNif, heirNif, heirSubsequence);
     }
 }

@@ -1,49 +1,43 @@
 package com.example.app.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
-import java.math.BigDecimal;
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "GATA_SUPACAUS")
+@Table(name = "SUCCESSOR_CAUSE")
 @IdClass(SuccessorCauseId.class)
-public class SuccessorCause {
+public class SuccessorCause implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "AAPRESENTA")
+    @Column(name = "PRESENTATION_YEAR")
     private Integer presentationYear;
 
     @Id
-    @Column(name = "VFTIPOIMPU")
+    @Column(name = "TAX_TYPE", length = 2)
     private String taxType;
 
     @Id
-    @Column(name = "CDPRESENTA")
+    @Column(name = "PRESENTATION_CODE", length = 20)
     private String presentationCode;
 
     @Id
-    @Column(name = "CDNIFCAUSA")
+    @Column(name = "TAXPAYER_NIF", length = 15)
     private String taxpayerNif;
 
     @Id
-    @Column(name = "CDNIFSUPAS")
-    private String successorNif;
+    @Column(name = "HEIR_NIF", length = 15)
+    private String heirNif;
 
     @Id
-    @Column(name = "CDSUBSUPAS")
-    private String successorSubsequence;
+    @Column(name = "HEIR_SUBSEQUENCE", length = 5)
+    private String heirSubsequence;
 
-    @Column(name = "TLNOMBRE")
-    private String successorName;
+    @Column(name = "HEIR_NAME", length = 100)
+    private String heirName;
 
-    @Column(name = "PCPARTICIP")
-    private BigDecimal participationPercentage;
-
-    public SuccessorCause() {
-    }
+    public SuccessorCause() {}
 
     public Integer getPresentationYear() {
         return presentationYear;
@@ -77,35 +71,27 @@ public class SuccessorCause {
         this.taxpayerNif = taxpayerNif;
     }
 
-    public String getSuccessorNif() {
-        return successorNif;
+    public String getHeirNif() {
+        return heirNif;
     }
 
-    public void setSuccessorNif(String successorNif) {
-        this.successorNif = successorNif;
+    public void setHeirNif(String heirNif) {
+        this.heirNif = heirNif;
     }
 
-    public String getSuccessorSubsequence() {
-        return successorSubsequence;
+    public String getHeirSubsequence() {
+        return heirSubsequence;
     }
 
-    public void setSuccessorSubsequence(String successorSubsequence) {
-        this.successorSubsequence = successorSubsequence;
+    public void setHeirSubsequence(String heirSubsequence) {
+        this.heirSubsequence = heirSubsequence;
     }
 
-    public String getSuccessorName() {
-        return successorName;
+    public String getHeirName() {
+        return heirName;
     }
 
-    public void setSuccessorName(String successorName) {
-        this.successorName = successorName;
-    }
-
-    public BigDecimal getParticipationPercentage() {
-        return participationPercentage;
-    }
-
-    public void setParticipationPercentage(BigDecimal participationPercentage) {
-        this.participationPercentage = participationPercentage;
+    public void setHeirName(String heirName) {
+        this.heirName = heirName;
     }
 }

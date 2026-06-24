@@ -12,6 +12,6 @@ import java.util.Optional;
 @Repository
 public interface VehicleCatalogRepository extends JpaRepository<VehicleCatalog, Date> {
 
-    @Query("SELECT v FROM VehicleCatalog v WHERE v.catalogDate <= :referenceDate ORDER BY v.catalogDate DESC")
-    Optional<VehicleCatalog> findApplicableCatalog(@Param("referenceDate") Date referenceDate);
+    @Query("SELECT vc FROM VehicleCatalog vc WHERE vc.catalogDate <= :registrationDate ORDER BY vc.catalogDate DESC")
+    Optional<VehicleCatalog> findApplicableCatalog(@Param("registrationDate") Date registrationDate);
 }
