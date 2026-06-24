@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTLIA20900 - Asset Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">GTLIA20900</a>
+            <div class="navbar-nav">
+                <a class="nav-link" th:href="@{/assets}">Bienes</a>
+                <a class="nav-link" th:href="@{/swagger-ui.html}">API Docs</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <div class="jumbotron">
+            <h1 class="display-4">Sistema de Gestion de Bienes</h1>
+            <p class="lead">Aplicacion para la gestion de bienes en declaraciones tributarias.</p>
+            <hr class="my-4">
+            <p>Seleccione una opcion del menu para comenzar.</p>
+            <a class="btn btn-primary btn-lg" th:href="@{/assets}" role="button">Ver Bienes</a>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Bienes Urbanos</h5>
+                        <p class="card-text">Gestion de propiedades urbanas.</p>
+                        <a th:href="@{/assets}" class="btn btn-outline-primary">Acceder</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Bienes Rusticos</h5>
+                        <p class="card-text">Gestion de propiedades rusticas.</p>
+                        <a th:href="@{/assets}" class="btn btn-outline-primary">Acceder</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Vehiculos</h5>
+                        <p class="card-text">Gestion de vehiculos.</p>
+                        <a th:href="@{/assets}" class="btn btn-outline-primary">Acceder</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
