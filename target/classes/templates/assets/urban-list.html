@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Properties</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Asset Management</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/assets}">Assets</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/assets/urban}">Urban</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/assets/rustic}">Rustic</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/assets/vehicles}">Vehicles</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Urban Properties</h2>
+            <a th:href="@{/assets/urban/new}" class="btn btn-success">New Urban Property</a>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sequence</th>
+                        <th>Cadastral Ref</th>
+                        <th>Province</th>
+                        <th>Municipality</th>
+                        <th>Street</th>
+                        <th>Type</th>
+                        <th>Declared Value</th>
+                        <th>Verified Value</th>
+                        <th>Reference Value</th>
+                        <th>Conformity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="property : ${urbanProperties}">
+                        <td th:text="${property.assetSequence}"></td>
+                        <td th:text="${property.cadastralReference}"></td>
+                        <td th:text="${property.provinceDescription}"></td>
+                        <td th:text="${property.municipalityDescription}"></td>
+                        <td th:text="${property.streetName}"></td>
+                        <td th:text="${property.propertyTypeDescription}"></td>
+                        <td th:text="${#numbers.formatDecimal(property.declaredValue, 1, 2)}"></td>
+                        <td th:text="${#numbers.formatDecimal(property.verifiedValue, 1, 2)}"></td>
+                        <td th:text="${#numbers.formatDecimal(property.referenceValue, 1, 2)}"></td>
+                        <td>
+                            <span th:if="${property.conformityIndicator == 'S'}" class="badge bg-success">Conforme</span>
+                            <span th:if="${property.conformityIndicator == 'N'}" class="badge bg-warning">No Conforme</span>
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(urbanProperties)}">
+                        <td colspan="11" class="text-center">No urban properties found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
