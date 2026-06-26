@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Assets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Asset Management</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/assets}">Assets</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/assets/urban}">Urban</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/assets/rustic}">Rustic</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/assets/vehicles}">Vehicles</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Vehicle Assets</h2>
+            <a th:href="@{/assets/vehicles/new}" class="btn btn-success">New Vehicle</a>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sequence</th>
+                        <th>License Plate</th>
+                        <th>Type</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Registration Date</th>
+                        <th>Catalog Value</th>
+                        <th>Depreciation %</th>
+                        <th>Verified Value</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="vehicle : ${vehicles}">
+                        <td th:text="${vehicle.assetSequence}"></td>
+                        <td th:text="${vehicle.licensePlate}"></td>
+                        <td th:text="${vehicle.vehicleTypeDescription}"></td>
+                        <td th:text="${vehicle.vehicleBrandDescription}"></td>
+                        <td th:text="${vehicle.vehicleModelDescription}"></td>
+                        <td th:text="${#dates.format(vehicle.registrationDate, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${#numbers.formatDecimal(vehicle.catalogValue, 1, 2)}"></td>
+                        <td th:text="${#numbers.formatDecimal(vehicle.depreciationPercentage, 1, 2)}"></td>
+                        <td th:text="${#numbers.formatDecimal(vehicle.verifiedValue, 1, 2)}"></td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(vehicles)}">
+                        <td colspan="10" class="text-center">No vehicles found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
