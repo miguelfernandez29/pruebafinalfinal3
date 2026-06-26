@@ -6,7 +6,6 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Table(name = "GATA_BIENCAUS")
@@ -19,7 +18,7 @@ public class AssetCause {
 
     @Id
     @Column(name = "VFTIPOIMPU")
-    private String taxType;
+    private String taxTypeCode;
 
     @Id
     @Column(name = "CDPRESENTA")
@@ -27,7 +26,11 @@ public class AssetCause {
 
     @Id
     @Column(name = "CDNIFCAUSA")
-    private String taxpayerNif;
+    private String causeNif;
+
+    @Id
+    @Column(name = "CDSUBCAUSA")
+    private String subCauseCode;
 
     @Id
     @Column(name = "CDSECUBIEN")
@@ -36,14 +39,14 @@ public class AssetCause {
     @Column(name = "CDNATBIEN2")
     private String assetNatureCode;
 
-    @Column(name = "DSNATBIEN2")
-    private String assetNatureDescription;
-
     @Column(name = "CDPOSBIEN2")
     private String assetPositionCode;
 
-    @Column(name = "DSPOSBIEN2")
-    private String assetPositionDescription;
+    @Column(name = "CDTIPOBIEN")
+    private String assetTypeCode;
+
+    @Column(name = "DSTIPOBIEN")
+    private String assetTypeDescription;
 
     @Column(name = "PCTRANSMIS")
     private BigDecimal transmissionPercentage;
@@ -60,11 +63,29 @@ public class AssetCause {
     @Column(name = "ITCONFORME")
     private String conformityIndicator;
 
-    @Column(name = "CDSITBIHE2")
-    private String assetSituationCode;
+    @Column(name = "ITRED")
+    private String reductionIndicator;
 
-    @Column(name = "FCDEVENGO")
-    private Date accrualDate;
+    @Column(name = "ITVALORREF")
+    private String referenceValueIndicator;
+
+    @Column(name = "PTVALORREF")
+    private BigDecimal referenceValue;
+
+    @Column(name = "CDSITUVREF")
+    private String referenceValueSituation;
+
+    @Column(name = "ITVRVALIDO")
+    private String validReferenceValueIndicator;
+
+    @Column(name = "ITVALBDBI")
+    private String bdbiValueIndicator;
+
+    @Column(name = "ITBIENAFEC")
+    private String businessAffectedIndicator;
+
+    @Column(name = "ITREDUCCIO")
+    private String reductionAppliedIndicator;
 
     public AssetCause() {
     }
@@ -77,12 +98,12 @@ public class AssetCause {
         this.presentationYear = presentationYear;
     }
 
-    public String getTaxType() {
-        return taxType;
+    public String getTaxTypeCode() {
+        return taxTypeCode;
     }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
+    public void setTaxTypeCode(String taxTypeCode) {
+        this.taxTypeCode = taxTypeCode;
     }
 
     public String getPresentationCode() {
@@ -93,12 +114,20 @@ public class AssetCause {
         this.presentationCode = presentationCode;
     }
 
-    public String getTaxpayerNif() {
-        return taxpayerNif;
+    public String getCauseNif() {
+        return causeNif;
     }
 
-    public void setTaxpayerNif(String taxpayerNif) {
-        this.taxpayerNif = taxpayerNif;
+    public void setCauseNif(String causeNif) {
+        this.causeNif = causeNif;
+    }
+
+    public String getSubCauseCode() {
+        return subCauseCode;
+    }
+
+    public void setSubCauseCode(String subCauseCode) {
+        this.subCauseCode = subCauseCode;
     }
 
     public Integer getAssetSequence() {
@@ -117,14 +146,6 @@ public class AssetCause {
         this.assetNatureCode = assetNatureCode;
     }
 
-    public String getAssetNatureDescription() {
-        return assetNatureDescription;
-    }
-
-    public void setAssetNatureDescription(String assetNatureDescription) {
-        this.assetNatureDescription = assetNatureDescription;
-    }
-
     public String getAssetPositionCode() {
         return assetPositionCode;
     }
@@ -133,12 +154,20 @@ public class AssetCause {
         this.assetPositionCode = assetPositionCode;
     }
 
-    public String getAssetPositionDescription() {
-        return assetPositionDescription;
+    public String getAssetTypeCode() {
+        return assetTypeCode;
     }
 
-    public void setAssetPositionDescription(String assetPositionDescription) {
-        this.assetPositionDescription = assetPositionDescription;
+    public void setAssetTypeCode(String assetTypeCode) {
+        this.assetTypeCode = assetTypeCode;
+    }
+
+    public String getAssetTypeDescription() {
+        return assetTypeDescription;
+    }
+
+    public void setAssetTypeDescription(String assetTypeDescription) {
+        this.assetTypeDescription = assetTypeDescription;
     }
 
     public BigDecimal getTransmissionPercentage() {
@@ -181,19 +210,67 @@ public class AssetCause {
         this.conformityIndicator = conformityIndicator;
     }
 
-    public String getAssetSituationCode() {
-        return assetSituationCode;
+    public String getReductionIndicator() {
+        return reductionIndicator;
     }
 
-    public void setAssetSituationCode(String assetSituationCode) {
-        this.assetSituationCode = assetSituationCode;
+    public void setReductionIndicator(String reductionIndicator) {
+        this.reductionIndicator = reductionIndicator;
     }
 
-    public Date getAccrualDate() {
-        return accrualDate;
+    public String getReferenceValueIndicator() {
+        return referenceValueIndicator;
     }
 
-    public void setAccrualDate(Date accrualDate) {
-        this.accrualDate = accrualDate;
+    public void setReferenceValueIndicator(String referenceValueIndicator) {
+        this.referenceValueIndicator = referenceValueIndicator;
+    }
+
+    public BigDecimal getReferenceValue() {
+        return referenceValue;
+    }
+
+    public void setReferenceValue(BigDecimal referenceValue) {
+        this.referenceValue = referenceValue;
+    }
+
+    public String getReferenceValueSituation() {
+        return referenceValueSituation;
+    }
+
+    public void setReferenceValueSituation(String referenceValueSituation) {
+        this.referenceValueSituation = referenceValueSituation;
+    }
+
+    public String getValidReferenceValueIndicator() {
+        return validReferenceValueIndicator;
+    }
+
+    public void setValidReferenceValueIndicator(String validReferenceValueIndicator) {
+        this.validReferenceValueIndicator = validReferenceValueIndicator;
+    }
+
+    public String getBdbiValueIndicator() {
+        return bdbiValueIndicator;
+    }
+
+    public void setBdbiValueIndicator(String bdbiValueIndicator) {
+        this.bdbiValueIndicator = bdbiValueIndicator;
+    }
+
+    public String getBusinessAffectedIndicator() {
+        return businessAffectedIndicator;
+    }
+
+    public void setBusinessAffectedIndicator(String businessAffectedIndicator) {
+        this.businessAffectedIndicator = businessAffectedIndicator;
+    }
+
+    public String getReductionAppliedIndicator() {
+        return reductionAppliedIndicator;
+    }
+
+    public void setReductionAppliedIndicator(String reductionAppliedIndicator) {
+        this.reductionAppliedIndicator = reductionAppliedIndicator;
     }
 }

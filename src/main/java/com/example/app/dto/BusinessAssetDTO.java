@@ -4,14 +4,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
-public class BusinessAssetDTO {
+public class BusinessAssetDto {
 
     @NotNull
     private Integer presentationYear;
 
     @NotNull
     @Size(max = 2)
-    private String taxType;
+    private String taxTypeCode;
 
     @NotNull
     @Size(max = 14)
@@ -19,25 +19,26 @@ public class BusinessAssetDTO {
 
     @NotNull
     @Size(max = 9)
-    private String taxpayerNif;
+    private String causeNif;
+
+    @NotNull
+    @Size(max = 2)
+    private String subCauseCode;
 
     @NotNull
     private Integer assetSequence;
 
-    @Size(max = 10)
-    private String activityCode;
+    @Size(max = 3)
+    private String assetTypeCode;
 
-    @Size(max = 200)
-    private String activityDescription;
+    @Size(max = 100)
+    private String assetTypeDescription;
 
-    @Size(max = 10)
-    private String epigraphCode;
+    @Size(max = 9)
+    private String companyNif;
 
-    @Size(max = 200)
-    private String epigraphDescription;
-
-    @Size(max = 500)
-    private String assetDescription;
+    @Size(max = 100)
+    private String companyName;
 
     @Size(max = 2)
     private String provinceCode;
@@ -54,8 +55,11 @@ public class BusinessAssetDTO {
     @Size(max = 5)
     private String postalCode;
 
-    @Size(max = 5)
+    @Size(max = 2)
     private String streetTypeCode;
+
+    @Size(max = 20)
+    private String streetTypeDescription;
 
     @Size(max = 100)
     private String streetName;
@@ -63,20 +67,22 @@ public class BusinessAssetDTO {
     @Size(max = 10)
     private String streetNumber;
 
-    @Size(max = 1)
-    private String reductionIndicator;
+    @Size(max = 500)
+    private String description;
 
     @Size(max = 1)
-    private String affectationIndicator;
+    private String businessAffectedIndicator;
+
+    @Size(max = 1)
+    private String reductionIndicator;
 
     private BigDecimal declaredValue;
 
     private BigDecimal verifiedValue;
 
-    @Size(max = 1)
-    private String conformityIndicator;
+    private BigDecimal participationPercentage;
 
-    public BusinessAssetDTO() {
+    public BusinessAssetDto() {
     }
 
     public Integer getPresentationYear() {
@@ -87,12 +93,12 @@ public class BusinessAssetDTO {
         this.presentationYear = presentationYear;
     }
 
-    public String getTaxType() {
-        return taxType;
+    public String getTaxTypeCode() {
+        return taxTypeCode;
     }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
+    public void setTaxTypeCode(String taxTypeCode) {
+        this.taxTypeCode = taxTypeCode;
     }
 
     public String getPresentationCode() {
@@ -103,12 +109,20 @@ public class BusinessAssetDTO {
         this.presentationCode = presentationCode;
     }
 
-    public String getTaxpayerNif() {
-        return taxpayerNif;
+    public String getCauseNif() {
+        return causeNif;
     }
 
-    public void setTaxpayerNif(String taxpayerNif) {
-        this.taxpayerNif = taxpayerNif;
+    public void setCauseNif(String causeNif) {
+        this.causeNif = causeNif;
+    }
+
+    public String getSubCauseCode() {
+        return subCauseCode;
+    }
+
+    public void setSubCauseCode(String subCauseCode) {
+        this.subCauseCode = subCauseCode;
     }
 
     public Integer getAssetSequence() {
@@ -119,44 +133,36 @@ public class BusinessAssetDTO {
         this.assetSequence = assetSequence;
     }
 
-    public String getActivityCode() {
-        return activityCode;
+    public String getAssetTypeCode() {
+        return assetTypeCode;
     }
 
-    public void setActivityCode(String activityCode) {
-        this.activityCode = activityCode;
+    public void setAssetTypeCode(String assetTypeCode) {
+        this.assetTypeCode = assetTypeCode;
     }
 
-    public String getActivityDescription() {
-        return activityDescription;
+    public String getAssetTypeDescription() {
+        return assetTypeDescription;
     }
 
-    public void setActivityDescription(String activityDescription) {
-        this.activityDescription = activityDescription;
+    public void setAssetTypeDescription(String assetTypeDescription) {
+        this.assetTypeDescription = assetTypeDescription;
     }
 
-    public String getEpigraphCode() {
-        return epigraphCode;
+    public String getCompanyNif() {
+        return companyNif;
     }
 
-    public void setEpigraphCode(String epigraphCode) {
-        this.epigraphCode = epigraphCode;
+    public void setCompanyNif(String companyNif) {
+        this.companyNif = companyNif;
     }
 
-    public String getEpigraphDescription() {
-        return epigraphDescription;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setEpigraphDescription(String epigraphDescription) {
-        this.epigraphDescription = epigraphDescription;
-    }
-
-    public String getAssetDescription() {
-        return assetDescription;
-    }
-
-    public void setAssetDescription(String assetDescription) {
-        this.assetDescription = assetDescription;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getProvinceCode() {
@@ -207,6 +213,14 @@ public class BusinessAssetDTO {
         this.streetTypeCode = streetTypeCode;
     }
 
+    public String getStreetTypeDescription() {
+        return streetTypeDescription;
+    }
+
+    public void setStreetTypeDescription(String streetTypeDescription) {
+        this.streetTypeDescription = streetTypeDescription;
+    }
+
     public String getStreetName() {
         return streetName;
     }
@@ -223,20 +237,28 @@ public class BusinessAssetDTO {
         this.streetNumber = streetNumber;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getBusinessAffectedIndicator() {
+        return businessAffectedIndicator;
+    }
+
+    public void setBusinessAffectedIndicator(String businessAffectedIndicator) {
+        this.businessAffectedIndicator = businessAffectedIndicator;
+    }
+
     public String getReductionIndicator() {
         return reductionIndicator;
     }
 
     public void setReductionIndicator(String reductionIndicator) {
         this.reductionIndicator = reductionIndicator;
-    }
-
-    public String getAffectationIndicator() {
-        return affectationIndicator;
-    }
-
-    public void setAffectationIndicator(String affectationIndicator) {
-        this.affectationIndicator = affectationIndicator;
     }
 
     public BigDecimal getDeclaredValue() {
@@ -255,11 +277,11 @@ public class BusinessAssetDTO {
         this.verifiedValue = verifiedValue;
     }
 
-    public String getConformityIndicator() {
-        return conformityIndicator;
+    public BigDecimal getParticipationPercentage() {
+        return participationPercentage;
     }
 
-    public void setConformityIndicator(String conformityIndicator) {
-        this.conformityIndicator = conformityIndicator;
+    public void setParticipationPercentage(BigDecimal participationPercentage) {
+        this.participationPercentage = participationPercentage;
     }
 }

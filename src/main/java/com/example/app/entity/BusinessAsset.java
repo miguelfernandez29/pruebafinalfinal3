@@ -18,7 +18,7 @@ public class BusinessAsset {
 
     @Id
     @Column(name = "VFTIPOIMPU")
-    private String taxType;
+    private String taxTypeCode;
 
     @Id
     @Column(name = "CDPRESENTA")
@@ -26,26 +26,27 @@ public class BusinessAsset {
 
     @Id
     @Column(name = "CDNIFCAUSA")
-    private String taxpayerNif;
+    private String causeNif;
+
+    @Id
+    @Column(name = "CDSUBCAUSA")
+    private String subCauseCode;
 
     @Id
     @Column(name = "CDSECUBIEN")
     private Integer assetSequence;
 
-    @Column(name = "CDACTIVIDA")
-    private String activityCode;
+    @Column(name = "CDTIPOBIEN")
+    private String assetTypeCode;
 
-    @Column(name = "DSACTIVIDA")
-    private String activityDescription;
+    @Column(name = "DSTIPOBIEN")
+    private String assetTypeDescription;
 
-    @Column(name = "CDEPIGRAFE")
-    private String epigraphCode;
+    @Column(name = "TLNIFEMPRE")
+    private String companyNif;
 
-    @Column(name = "DSEPIGRAFE")
-    private String epigraphDescription;
-
-    @Column(name = "DSBIEN")
-    private String assetDescription;
+    @Column(name = "TLNOMEMPRE")
+    private String companyName;
 
     @Column(name = "CDPROVINCI")
     private String provinceCode;
@@ -62,20 +63,26 @@ public class BusinessAsset {
     @Column(name = "TLCODIPOST")
     private String postalCode;
 
-    @Column(name = "CDTIPOVIAP")
+    @Column(name = "CDTIPOVIAL")
     private String streetTypeCode;
 
-    @Column(name = "TLNOMBREVI")
+    @Column(name = "DSTIPOVIAL")
+    private String streetTypeDescription;
+
+    @Column(name = "TLNOMBVIAL")
     private String streetName;
 
-    @Column(name = "TLNUMERO")
+    @Column(name = "TLNUMEVIAL")
     private String streetNumber;
+
+    @Column(name = "TLDESCRIPC")
+    private String description;
+
+    @Column(name = "ITBIENAFEC")
+    private String businessAffectedIndicator;
 
     @Column(name = "ITREDUCCIO")
     private String reductionIndicator;
-
-    @Column(name = "ITBIENAFEC")
-    private String affectationIndicator;
 
     @Column(name = "PTDECLARAD")
     private BigDecimal declaredValue;
@@ -83,8 +90,8 @@ public class BusinessAsset {
     @Column(name = "PTCOMPROBA")
     private BigDecimal verifiedValue;
 
-    @Column(name = "ITCONFORME")
-    private String conformityIndicator;
+    @Column(name = "PCPARTICIP")
+    private BigDecimal participationPercentage;
 
     public BusinessAsset() {
     }
@@ -97,12 +104,12 @@ public class BusinessAsset {
         this.presentationYear = presentationYear;
     }
 
-    public String getTaxType() {
-        return taxType;
+    public String getTaxTypeCode() {
+        return taxTypeCode;
     }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
+    public void setTaxTypeCode(String taxTypeCode) {
+        this.taxTypeCode = taxTypeCode;
     }
 
     public String getPresentationCode() {
@@ -113,12 +120,20 @@ public class BusinessAsset {
         this.presentationCode = presentationCode;
     }
 
-    public String getTaxpayerNif() {
-        return taxpayerNif;
+    public String getCauseNif() {
+        return causeNif;
     }
 
-    public void setTaxpayerNif(String taxpayerNif) {
-        this.taxpayerNif = taxpayerNif;
+    public void setCauseNif(String causeNif) {
+        this.causeNif = causeNif;
+    }
+
+    public String getSubCauseCode() {
+        return subCauseCode;
+    }
+
+    public void setSubCauseCode(String subCauseCode) {
+        this.subCauseCode = subCauseCode;
     }
 
     public Integer getAssetSequence() {
@@ -129,44 +144,36 @@ public class BusinessAsset {
         this.assetSequence = assetSequence;
     }
 
-    public String getActivityCode() {
-        return activityCode;
+    public String getAssetTypeCode() {
+        return assetTypeCode;
     }
 
-    public void setActivityCode(String activityCode) {
-        this.activityCode = activityCode;
+    public void setAssetTypeCode(String assetTypeCode) {
+        this.assetTypeCode = assetTypeCode;
     }
 
-    public String getActivityDescription() {
-        return activityDescription;
+    public String getAssetTypeDescription() {
+        return assetTypeDescription;
     }
 
-    public void setActivityDescription(String activityDescription) {
-        this.activityDescription = activityDescription;
+    public void setAssetTypeDescription(String assetTypeDescription) {
+        this.assetTypeDescription = assetTypeDescription;
     }
 
-    public String getEpigraphCode() {
-        return epigraphCode;
+    public String getCompanyNif() {
+        return companyNif;
     }
 
-    public void setEpigraphCode(String epigraphCode) {
-        this.epigraphCode = epigraphCode;
+    public void setCompanyNif(String companyNif) {
+        this.companyNif = companyNif;
     }
 
-    public String getEpigraphDescription() {
-        return epigraphDescription;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setEpigraphDescription(String epigraphDescription) {
-        this.epigraphDescription = epigraphDescription;
-    }
-
-    public String getAssetDescription() {
-        return assetDescription;
-    }
-
-    public void setAssetDescription(String assetDescription) {
-        this.assetDescription = assetDescription;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getProvinceCode() {
@@ -217,6 +224,14 @@ public class BusinessAsset {
         this.streetTypeCode = streetTypeCode;
     }
 
+    public String getStreetTypeDescription() {
+        return streetTypeDescription;
+    }
+
+    public void setStreetTypeDescription(String streetTypeDescription) {
+        this.streetTypeDescription = streetTypeDescription;
+    }
+
     public String getStreetName() {
         return streetName;
     }
@@ -233,20 +248,28 @@ public class BusinessAsset {
         this.streetNumber = streetNumber;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getBusinessAffectedIndicator() {
+        return businessAffectedIndicator;
+    }
+
+    public void setBusinessAffectedIndicator(String businessAffectedIndicator) {
+        this.businessAffectedIndicator = businessAffectedIndicator;
+    }
+
     public String getReductionIndicator() {
         return reductionIndicator;
     }
 
     public void setReductionIndicator(String reductionIndicator) {
         this.reductionIndicator = reductionIndicator;
-    }
-
-    public String getAffectationIndicator() {
-        return affectationIndicator;
-    }
-
-    public void setAffectationIndicator(String affectationIndicator) {
-        this.affectationIndicator = affectationIndicator;
     }
 
     public BigDecimal getDeclaredValue() {
@@ -265,11 +288,11 @@ public class BusinessAsset {
         this.verifiedValue = verifiedValue;
     }
 
-    public String getConformityIndicator() {
-        return conformityIndicator;
+    public BigDecimal getParticipationPercentage() {
+        return participationPercentage;
     }
 
-    public void setConformityIndicator(String conformityIndicator) {
-        this.conformityIndicator = conformityIndicator;
+    public void setParticipationPercentage(BigDecimal participationPercentage) {
+        this.participationPercentage = participationPercentage;
     }
 }

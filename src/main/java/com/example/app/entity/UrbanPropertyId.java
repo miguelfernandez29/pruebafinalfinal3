@@ -8,19 +8,22 @@ public class UrbanPropertyId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer presentationYear;
-    private String taxType;
+    private String taxTypeCode;
     private String presentationCode;
-    private String taxpayerNif;
+    private String causeNif;
+    private String subCauseCode;
     private Integer assetSequence;
 
     public UrbanPropertyId() {
     }
 
-    public UrbanPropertyId(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif, Integer assetSequence) {
+    public UrbanPropertyId(Integer presentationYear, String taxTypeCode, String presentationCode,
+                           String causeNif, String subCauseCode, Integer assetSequence) {
         this.presentationYear = presentationYear;
-        this.taxType = taxType;
+        this.taxTypeCode = taxTypeCode;
         this.presentationCode = presentationCode;
-        this.taxpayerNif = taxpayerNif;
+        this.causeNif = causeNif;
+        this.subCauseCode = subCauseCode;
         this.assetSequence = assetSequence;
     }
 
@@ -32,12 +35,12 @@ public class UrbanPropertyId implements Serializable {
         this.presentationYear = presentationYear;
     }
 
-    public String getTaxType() {
-        return taxType;
+    public String getTaxTypeCode() {
+        return taxTypeCode;
     }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
+    public void setTaxTypeCode(String taxTypeCode) {
+        this.taxTypeCode = taxTypeCode;
     }
 
     public String getPresentationCode() {
@@ -48,12 +51,20 @@ public class UrbanPropertyId implements Serializable {
         this.presentationCode = presentationCode;
     }
 
-    public String getTaxpayerNif() {
-        return taxpayerNif;
+    public String getCauseNif() {
+        return causeNif;
     }
 
-    public void setTaxpayerNif(String taxpayerNif) {
-        this.taxpayerNif = taxpayerNif;
+    public void setCauseNif(String causeNif) {
+        this.causeNif = causeNif;
+    }
+
+    public String getSubCauseCode() {
+        return subCauseCode;
+    }
+
+    public void setSubCauseCode(String subCauseCode) {
+        this.subCauseCode = subCauseCode;
     }
 
     public Integer getAssetSequence() {
@@ -70,14 +81,15 @@ public class UrbanPropertyId implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         UrbanPropertyId that = (UrbanPropertyId) o;
         return Objects.equals(presentationYear, that.presentationYear) &&
-                Objects.equals(taxType, that.taxType) &&
-                Objects.equals(presentationCode, that.presentationCode) &&
-                Objects.equals(taxpayerNif, that.taxpayerNif) &&
-                Objects.equals(assetSequence, that.assetSequence);
+               Objects.equals(taxTypeCode, that.taxTypeCode) &&
+               Objects.equals(presentationCode, that.presentationCode) &&
+               Objects.equals(causeNif, that.causeNif) &&
+               Objects.equals(subCauseCode, that.subCauseCode) &&
+               Objects.equals(assetSequence, that.assetSequence);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence);
+        return Objects.hash(presentationYear, taxTypeCode, presentationCode, causeNif, subCauseCode, assetSequence);
     }
 }

@@ -1,15 +1,16 @@
 package com.example.app.service;
 
-import com.example.app.dto.OtherAssetDTO;
+import com.example.app.dto.OtherAssetDto;
 import com.example.app.entity.OtherAsset;
 import com.example.app.entity.OtherAssetId;
+import com.example.app.exception.BusinessValidationException;
+import com.example.app.exception.ResourceNotFoundException;
 import com.example.app.repository.OtherAssetRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,78 +23,97 @@ public class OtherAssetService {
         this.otherAssetRepository = otherAssetRepository;
     }
 
-    public List<OtherAssetDTO> findAll() {
+    public List<OtherAssetDto> findAll() {
         return otherAssetRepository.findAll().stream()
-                .map(this::toDTO)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    public Optional<OtherAssetDTO> findById(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif, Integer assetSequence) {
-        OtherAssetId id = new OtherAssetId(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence);
-        return otherAssetRepository.findById(id).map(this::toDTO);
+    public OtherAssetDto findById(Integer presentationYear, String taxTypeCode, String presentationCode,
+                                   String causeNif, String subCauseCode, Integer assetSequence) {
+        OtherAssetId id = new OtherAssetId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        OtherAsset entity = otherAssetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("OtherAsset", "id", id));
+        return toDto(entity);
     }
 
-    public List<OtherAssetDTO> findByDeclaration(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif) {
-        return otherAssetRepository.findByPresentationYearAndTaxTypeAndPresentationCodeAndTaxpayerNif(
-                presentationYear, taxType, presentationCode, taxpayerNif)
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public OtherAssetDTO save(OtherAssetDTO dto) {
-        validateNumberOfUnits(dto.getNumberOfUnits());
-        validateDeclaredValue(dto.getDeclaredValue());
-
+    public OtherAssetDto create(OtherAssetDto dto) {
+        validateOtherAsset(dto);
         OtherAsset entity = toEntity(dto);
         OtherAsset saved = otherAssetRepository.save(entity);
-        return toDTO(saved);
+        return toDto(saved);
     }
 
-    public void deleteById(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif, Integer assetSequence) {
-        OtherAssetId id = new OtherAssetId(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence);
-        otherAssetRepository.deleteById(id);
+    public OtherAssetDto update(Integer presentationYear, String taxTypeCode, String presentationCode,
+                                 String causeNif, String subCauseCode, Integer assetSequence,
+                                 OtherAssetDto dto) {
+        OtherAssetId id = new OtherAssetId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        OtherAsset existing = otherAssetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("OtherAsset", "id", id));
+        
+        validateOtherAsset(dto);
+        updateEntityFromDto(existing, dto);
+        
+        OtherAsset saved = otherAssetRepository.save(existing);
+        return toDto(saved);
     }
 
-    private void validateNumberOfUnits(BigDecimal numberOfUnits) {
-        if (numberOfUnits != null && numberOfUnits.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El numero de unidades debe ser positivo.");
+    public void delete(Integer presentationYear, String taxTypeCode, String presentationCode,
+                       String causeNif, String subCauseCode, Integer assetSequence) {
+        OtherAssetId id = new OtherAssetId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        OtherAsset existing = otherAssetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("OtherAsset", "id", id));
+        otherAssetRepository.delete(existing);
+    }
+
+    private void validateOtherAsset(OtherAssetDto dto) {
+        if (dto.getDeclaredValue() != null && dto.getDeclaredValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessValidationException("INVALID_VALUE", "declaredValue",
+                    "Declared value must be positive");
+        }
+        
+        if (dto.getVerifiedValue() != null && dto.getVerifiedValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessValidationException("INVALID_VALUE", "verifiedValue",
+                    "Verified value must be positive");
         }
     }
 
-    private void validateDeclaredValue(BigDecimal declaredValue) {
-        if (declaredValue != null && declaredValue.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("El valor declarado debe ser positivo.");
-        }
-    }
-
-    private OtherAssetDTO toDTO(OtherAsset entity) {
-        OtherAssetDTO dto = new OtherAssetDTO();
+    private OtherAssetDto toDto(OtherAsset entity) {
+        OtherAssetDto dto = new OtherAssetDto();
         dto.setPresentationYear(entity.getPresentationYear());
-        dto.setTaxType(entity.getTaxType());
+        dto.setTaxTypeCode(entity.getTaxTypeCode());
         dto.setPresentationCode(entity.getPresentationCode());
-        dto.setTaxpayerNif(entity.getTaxpayerNif());
+        dto.setCauseNif(entity.getCauseNif());
+        dto.setSubCauseCode(entity.getSubCauseCode());
         dto.setAssetSequence(entity.getAssetSequence());
-        dto.setAssetDescription(entity.getAssetDescription());
-        dto.setNumberOfUnits(entity.getNumberOfUnits());
+        dto.setAssetTypeCode(entity.getAssetTypeCode());
+        dto.setAssetTypeDescription(entity.getAssetTypeDescription());
+        dto.setDescription(entity.getDescription());
         dto.setDeclaredValue(entity.getDeclaredValue());
         dto.setVerifiedValue(entity.getVerifiedValue());
-        dto.setConformityIndicator(entity.getConformityIndicator());
         return dto;
     }
 
-    private OtherAsset toEntity(OtherAssetDTO dto) {
+    private OtherAsset toEntity(OtherAssetDto dto) {
         OtherAsset entity = new OtherAsset();
         entity.setPresentationYear(dto.getPresentationYear());
-        entity.setTaxType(dto.getTaxType());
+        entity.setTaxTypeCode(dto.getTaxTypeCode());
         entity.setPresentationCode(dto.getPresentationCode());
-        entity.setTaxpayerNif(dto.getTaxpayerNif());
+        entity.setCauseNif(dto.getCauseNif());
+        entity.setSubCauseCode(dto.getSubCauseCode());
         entity.setAssetSequence(dto.getAssetSequence());
-        entity.setAssetDescription(dto.getAssetDescription());
-        entity.setNumberOfUnits(dto.getNumberOfUnits());
+        updateEntityFromDto(entity, dto);
+        return entity;
+    }
+
+    private void updateEntityFromDto(OtherAsset entity, OtherAssetDto dto) {
+        entity.setAssetTypeCode(dto.getAssetTypeCode());
+        entity.setAssetTypeDescription(dto.getAssetTypeDescription());
+        entity.setDescription(dto.getDescription());
         entity.setDeclaredValue(dto.getDeclaredValue());
         entity.setVerifiedValue(dto.getVerifiedValue());
-        entity.setConformityIndicator(dto.getConformityIndicator());
-        return entity;
     }
 }

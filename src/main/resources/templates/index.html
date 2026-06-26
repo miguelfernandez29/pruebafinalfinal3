@@ -3,57 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GTLIA20900 - Asset Management</title>
+    <title th:text="${title}">Asset Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="#">GTLIA20900</a>
-            <div class="navbar-nav">
-                <a class="nav-link" th:href="@{/assets}">Bienes</a>
-                <a class="nav-link" th:href="@{/swagger-ui.html}">API Docs</a>
+            <a class="navbar-brand" href="/">Asset Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/assets}">Assets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/assets/urban}">Urban Properties</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/assets/rustic}">Rustic Properties</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/assets/vehicles}">Vehicles</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
+
     <div class="container mt-4">
-        <div class="jumbotron">
-            <h1 class="display-4">Sistema de Gestion de Bienes</h1>
-            <p class="lead">Aplicacion para la gestion de bienes en declaraciones tributarias.</p>
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Asset Management System</h1>
+            <p class="lead">Manage tax declaration assets including urban properties, rustic properties, vehicles, securities, and more.</p>
             <hr class="my-4">
-            <p>Seleccione una opcion del menu para comenzar.</p>
-            <a class="btn btn-primary btn-lg" th:href="@{/assets}" role="button">Ver Bienes</a>
-        </div>
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Bienes Urbanos</h5>
-                        <p class="card-text">Gestion de propiedades urbanas.</p>
-                        <a th:href="@{/assets}" class="btn btn-outline-primary">Acceder</a>
+            <p>Select an option from the menu to get started.</p>
+            <div class="row mt-4">
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Asset Causes</h5>
+                            <p class="card-text">Manage main asset records linked to tax declarations.</p>
+                            <a th:href="@{/assets}" class="btn btn-primary">View Assets</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Bienes Rusticos</h5>
-                        <p class="card-text">Gestion de propiedades rusticas.</p>
-                        <a th:href="@{/assets}" class="btn btn-outline-primary">Acceder</a>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Urban Properties</h5>
+                            <p class="card-text">Manage urban real estate properties.</p>
+                            <a th:href="@{/assets/urban}" class="btn btn-primary">View Urban</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Vehiculos</h5>
-                        <p class="card-text">Gestion de vehiculos.</p>
-                        <a th:href="@{/assets}" class="btn btn-outline-primary">Acceder</a>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Rustic Properties</h5>
+                            <p class="card-text">Manage rural and agricultural properties.</p>
+                            <a th:href="@{/assets/rustic}" class="btn btn-primary">View Rustic</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Vehicles</h5>
+                            <p class="card-text">Manage vehicle assets with depreciation.</p>
+                            <a th:href="@{/assets/vehicles}" class="btn btn-primary">View Vehicles</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">API Documentation</h5>
+                            <p class="card-text">View REST API documentation.</p>
+                            <a href="/swagger-ui.html" class="btn btn-secondary">Swagger UI</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -18,7 +18,7 @@ public class UnlistedSecurities {
 
     @Id
     @Column(name = "VFTIPOIMPU")
-    private String taxType;
+    private String taxTypeCode;
 
     @Id
     @Column(name = "CDPRESENTA")
@@ -26,23 +26,36 @@ public class UnlistedSecurities {
 
     @Id
     @Column(name = "CDNIFCAUSA")
-    private String taxpayerNif;
+    private String causeNif;
+
+    @Id
+    @Column(name = "CDSUBCAUSA")
+    private String subCauseCode;
 
     @Id
     @Column(name = "CDSECUBIEN")
     private Integer assetSequence;
 
+    @Column(name = "CDTIPOBIEN")
+    private String assetTypeCode;
+
+    @Column(name = "DSTIPOBIEN")
+    private String assetTypeDescription;
+
     @Column(name = "TLCIFEMPRE")
     private String companyCif;
 
-    @Column(name = "DSBIEN")
-    private String assetDescription;
+    @Column(name = "TLNOMEMPRE")
+    private String companyName;
 
-    @Column(name = "PTVALTEORICO")
-    private BigDecimal theoreticalValue;
+    @Column(name = "NUTITULOS")
+    private Integer numberOfShares;
 
-    @Column(name = "NMUNIDADES")
-    private BigDecimal numberOfUnits;
+    @Column(name = "PTNOMINAL")
+    private BigDecimal nominalValue;
+
+    @Column(name = "PTTEORREAL")
+    private BigDecimal realTheoreticalValue;
 
     @Column(name = "PTDECLARAD")
     private BigDecimal declaredValue;
@@ -50,8 +63,8 @@ public class UnlistedSecurities {
     @Column(name = "PTCOMPROBA")
     private BigDecimal verifiedValue;
 
-    @Column(name = "ITCONFORME")
-    private String conformityIndicator;
+    @Column(name = "PCPARTICIP")
+    private BigDecimal participationPercentage;
 
     public UnlistedSecurities() {
     }
@@ -64,12 +77,12 @@ public class UnlistedSecurities {
         this.presentationYear = presentationYear;
     }
 
-    public String getTaxType() {
-        return taxType;
+    public String getTaxTypeCode() {
+        return taxTypeCode;
     }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
+    public void setTaxTypeCode(String taxTypeCode) {
+        this.taxTypeCode = taxTypeCode;
     }
 
     public String getPresentationCode() {
@@ -80,12 +93,20 @@ public class UnlistedSecurities {
         this.presentationCode = presentationCode;
     }
 
-    public String getTaxpayerNif() {
-        return taxpayerNif;
+    public String getCauseNif() {
+        return causeNif;
     }
 
-    public void setTaxpayerNif(String taxpayerNif) {
-        this.taxpayerNif = taxpayerNif;
+    public void setCauseNif(String causeNif) {
+        this.causeNif = causeNif;
+    }
+
+    public String getSubCauseCode() {
+        return subCauseCode;
+    }
+
+    public void setSubCauseCode(String subCauseCode) {
+        this.subCauseCode = subCauseCode;
     }
 
     public Integer getAssetSequence() {
@@ -96,6 +117,22 @@ public class UnlistedSecurities {
         this.assetSequence = assetSequence;
     }
 
+    public String getAssetTypeCode() {
+        return assetTypeCode;
+    }
+
+    public void setAssetTypeCode(String assetTypeCode) {
+        this.assetTypeCode = assetTypeCode;
+    }
+
+    public String getAssetTypeDescription() {
+        return assetTypeDescription;
+    }
+
+    public void setAssetTypeDescription(String assetTypeDescription) {
+        this.assetTypeDescription = assetTypeDescription;
+    }
+
     public String getCompanyCif() {
         return companyCif;
     }
@@ -104,28 +141,36 @@ public class UnlistedSecurities {
         this.companyCif = companyCif;
     }
 
-    public String getAssetDescription() {
-        return assetDescription;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setAssetDescription(String assetDescription) {
-        this.assetDescription = assetDescription;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
-    public BigDecimal getTheoreticalValue() {
-        return theoreticalValue;
+    public Integer getNumberOfShares() {
+        return numberOfShares;
     }
 
-    public void setTheoreticalValue(BigDecimal theoreticalValue) {
-        this.theoreticalValue = theoreticalValue;
+    public void setNumberOfShares(Integer numberOfShares) {
+        this.numberOfShares = numberOfShares;
     }
 
-    public BigDecimal getNumberOfUnits() {
-        return numberOfUnits;
+    public BigDecimal getNominalValue() {
+        return nominalValue;
     }
 
-    public void setNumberOfUnits(BigDecimal numberOfUnits) {
-        this.numberOfUnits = numberOfUnits;
+    public void setNominalValue(BigDecimal nominalValue) {
+        this.nominalValue = nominalValue;
+    }
+
+    public BigDecimal getRealTheoreticalValue() {
+        return realTheoreticalValue;
+    }
+
+    public void setRealTheoreticalValue(BigDecimal realTheoreticalValue) {
+        this.realTheoreticalValue = realTheoreticalValue;
     }
 
     public BigDecimal getDeclaredValue() {
@@ -144,11 +189,11 @@ public class UnlistedSecurities {
         this.verifiedValue = verifiedValue;
     }
 
-    public String getConformityIndicator() {
-        return conformityIndicator;
+    public BigDecimal getParticipationPercentage() {
+        return participationPercentage;
     }
 
-    public void setConformityIndicator(String conformityIndicator) {
-        this.conformityIndicator = conformityIndicator;
+    public void setParticipationPercentage(BigDecimal participationPercentage) {
+        this.participationPercentage = participationPercentage;
     }
 }

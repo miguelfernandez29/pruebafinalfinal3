@@ -13,14 +13,33 @@ import java.util.Optional;
 @Repository
 public interface AssetCauseRepository extends JpaRepository<AssetCause, AssetCauseId> {
 
-    List<AssetCause> findByPresentationYearAndTaxTypeAndPresentationCodeAndTaxpayerNif(
-            Integer presentationYear, String taxType, String presentationCode, String taxpayerNif);
+    List<AssetCause> findByPresentationYearAndTaxTypeCodeAndPresentationCodeAndCauseNifAndSubCauseCode(
+            Integer presentationYear, String taxTypeCode, String presentationCode,
+            String causeNif, String subCauseCode);
 
     @Query("SELECT COALESCE(MAX(a.assetSequence), 0) + 1 FROM AssetCause a " +
-           "WHERE a.presentationYear = :presentationYear AND a.taxType = :taxType " +
-           "AND a.presentationCode = :presentationCode AND a.taxpayerNif = :taxpayerNif")
+           "WHERE a.presentationYear = :presentationYear " +
+           "AND a.taxTypeCode = :taxTypeCode " +
+           "AND a.presentationCode = :presentationCode " +
+           "AND a.causeNif = :causeNif " +
+           "AND a.subCauseCode = :subCauseCode")
     Integer findNextAssetSequence(@Param("presentationYear") Integer presentationYear,
-                                  @Param("taxType") String taxType,
+                                  @Param("taxTypeCode") String taxTypeCode,
                                   @Param("presentationCode") String presentationCode,
-                                  @Param("taxpayerNif") String taxpayerNif);
+                                  @Param("causeNif") String causeNif,
+                                  @Param("subCauseCode") String subCauseCode);
+
+    List<AssetCause> findByPresentationYearAndTaxTypeCodeAndPresentationCodeAndCauseNifAndSubCauseCodeAndAssetNatureCode(
+            Integer presentationYear, String taxTypeCode, String presentationCode,
+            String causeNif, String subCauseCode, String assetNatureCode);
+
+    @Query("SELECT a FROM AssetCause a WHERE a.presentationYear = :presentationYear " +
+           "AND a.taxTypeCode = :taxTypeCode AND a.presentationCode = :presentationCode " +
+           "AND a.causeNif = :causeNif AND a.subCauseCode = :subCauseCode " +
+           "AND a.reductionIndicator = 'S'")
+    List<AssetCause> findAssetsWithReductions(@Param("presentationYear") Integer presentationYear,
+                                              @Param("taxTypeCode") String taxTypeCode,
+                                              @Param("presentationCode") String presentationCode,
+                                              @Param("causeNif") String causeNif,
+                                              @Param("subCauseCode") String subCauseCode);
 }

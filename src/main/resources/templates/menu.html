@@ -3,29 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Principal</title>
+    <title>Main Menu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" th:href="@{/}">GTLIA20900</a>
-            <div class="navbar-nav">
-                <a class="nav-link active" th:href="@{/assets}">Bienes</a>
-            </div>
+            <a class="navbar-brand" href="/">Asset Management</a>
         </div>
     </nav>
+
     <div class="container mt-4">
-        <h2>Menu Principal</h2>
-        <div class="list-group mt-3">
-            <a th:href="@{/assets}" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">Gestion de Bienes</h5>
+        <h2>Main Menu</h2>
+        <div class="row mt-4">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Asset Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a th:href="@{/assets}" class="text-decoration-none">Asset Causes (BIENCAUS)</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a th:href="@{/assets/urban}" class="text-decoration-none">Urban Properties (BIENURBA)</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a th:href="@{/assets/rustic}" class="text-decoration-none">Rustic Properties (BIENRUST)</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a th:href="@{/assets/vehicles}" class="text-decoration-none">Vehicles (BIENVEHI)</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <p class="mb-1">Consultar, crear, modificar y eliminar bienes.</p>
-            </a>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">Other Assets</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <span class="text-muted">Business Assets (BIENACEM)</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="text-muted">Bank Accounts (BIENCUBA)</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="text-muted">Listed Securities (BIENVANE)</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="text-muted">Unlisted Securities (BIENVANO)</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="text-muted">Other Assets (BIENOTRO)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">API Documentation</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Access the REST API documentation:</p>
+                        <a href="/swagger-ui.html" class="btn btn-info">Open Swagger UI</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

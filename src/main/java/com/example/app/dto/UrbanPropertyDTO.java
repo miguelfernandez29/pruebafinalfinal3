@@ -4,14 +4,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
-public class UrbanPropertyDTO {
+public class UrbanPropertyDto {
 
     @NotNull
     private Integer presentationYear;
 
     @NotNull
     @Size(max = 2)
-    private String taxType;
+    private String taxTypeCode;
 
     @NotNull
     @Size(max = 14)
@@ -19,10 +19,23 @@ public class UrbanPropertyDTO {
 
     @NotNull
     @Size(max = 9)
-    private String taxpayerNif;
+    private String causeNif;
+
+    @NotNull
+    @Size(max = 2)
+    private String subCauseCode;
 
     @NotNull
     private Integer assetSequence;
+
+    @Size(max = 3)
+    private String propertyTypeCode;
+
+    @Size(max = 100)
+    private String propertyTypeDescription;
+
+    @Size(max = 20)
+    private String cadastralReference;
 
     @Size(max = 2)
     private String provinceCode;
@@ -39,8 +52,11 @@ public class UrbanPropertyDTO {
     @Size(max = 5)
     private String postalCode;
 
-    @Size(max = 5)
+    @Size(max = 2)
     private String streetTypeCode;
+
+    @Size(max = 20)
+    private String streetTypeDescription;
 
     @Size(max = 100)
     private String streetName;
@@ -57,18 +73,11 @@ public class UrbanPropertyDTO {
     @Size(max = 10)
     private String door;
 
-    @Size(max = 20)
-    private String cadastralReference;
-
-    @Size(max = 2)
-    private String propertyTypeCode;
-
-    @Size(max = 100)
-    private String propertyTypeDescription;
-
-    private BigDecimal surfaceArea;
-
     private Integer constructionYear;
+
+    private BigDecimal constructedSurface;
+
+    private BigDecimal landSurface;
 
     @Size(max = 1)
     private String rentalIndicator;
@@ -80,24 +89,26 @@ public class UrbanPropertyDTO {
 
     private BigDecimal maxSalePrice;
 
-    @Size(max = 1)
-    private String disqualificationIndicator;
-
-    @Size(max = 1)
-    private String habitualResidenceIndicator;
-
-    private BigDecimal habitualResidenceValue;
-
     private BigDecimal declaredValue;
 
     private BigDecimal verifiedValue;
 
     private BigDecimal referenceValue;
 
-    private BigDecimal estimatedValue;
-
     @Size(max = 1)
     private String conformityIndicator;
+
+    @Size(max = 2)
+    private String referenceValueSituation;
+
+    @Size(max = 1)
+    private String referenceValueIndicator;
+
+    @Size(max = 1)
+    private String validReferenceValueIndicator;
+
+    @Size(max = 1)
+    private String bdbiValueIndicator;
 
     @Size(max = 10)
     private String urbanZoneCode;
@@ -105,10 +116,11 @@ public class UrbanPropertyDTO {
     @Size(max = 10)
     private String sectorCode;
 
-    @Size(max = 3)
-    private String countryCode;
+    private BigDecimal cadastralValue;
 
-    public UrbanPropertyDTO() {
+    private BigDecimal participationPercentage;
+
+    public UrbanPropertyDto() {
     }
 
     public Integer getPresentationYear() {
@@ -119,12 +131,12 @@ public class UrbanPropertyDTO {
         this.presentationYear = presentationYear;
     }
 
-    public String getTaxType() {
-        return taxType;
+    public String getTaxTypeCode() {
+        return taxTypeCode;
     }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
+    public void setTaxTypeCode(String taxTypeCode) {
+        this.taxTypeCode = taxTypeCode;
     }
 
     public String getPresentationCode() {
@@ -135,12 +147,20 @@ public class UrbanPropertyDTO {
         this.presentationCode = presentationCode;
     }
 
-    public String getTaxpayerNif() {
-        return taxpayerNif;
+    public String getCauseNif() {
+        return causeNif;
     }
 
-    public void setTaxpayerNif(String taxpayerNif) {
-        this.taxpayerNif = taxpayerNif;
+    public void setCauseNif(String causeNif) {
+        this.causeNif = causeNif;
+    }
+
+    public String getSubCauseCode() {
+        return subCauseCode;
+    }
+
+    public void setSubCauseCode(String subCauseCode) {
+        this.subCauseCode = subCauseCode;
     }
 
     public Integer getAssetSequence() {
@@ -149,6 +169,30 @@ public class UrbanPropertyDTO {
 
     public void setAssetSequence(Integer assetSequence) {
         this.assetSequence = assetSequence;
+    }
+
+    public String getPropertyTypeCode() {
+        return propertyTypeCode;
+    }
+
+    public void setPropertyTypeCode(String propertyTypeCode) {
+        this.propertyTypeCode = propertyTypeCode;
+    }
+
+    public String getPropertyTypeDescription() {
+        return propertyTypeDescription;
+    }
+
+    public void setPropertyTypeDescription(String propertyTypeDescription) {
+        this.propertyTypeDescription = propertyTypeDescription;
+    }
+
+    public String getCadastralReference() {
+        return cadastralReference;
+    }
+
+    public void setCadastralReference(String cadastralReference) {
+        this.cadastralReference = cadastralReference;
     }
 
     public String getProvinceCode() {
@@ -199,6 +243,14 @@ public class UrbanPropertyDTO {
         this.streetTypeCode = streetTypeCode;
     }
 
+    public String getStreetTypeDescription() {
+        return streetTypeDescription;
+    }
+
+    public void setStreetTypeDescription(String streetTypeDescription) {
+        this.streetTypeDescription = streetTypeDescription;
+    }
+
     public String getStreetName() {
         return streetName;
     }
@@ -239,44 +291,28 @@ public class UrbanPropertyDTO {
         this.door = door;
     }
 
-    public String getCadastralReference() {
-        return cadastralReference;
-    }
-
-    public void setCadastralReference(String cadastralReference) {
-        this.cadastralReference = cadastralReference;
-    }
-
-    public String getPropertyTypeCode() {
-        return propertyTypeCode;
-    }
-
-    public void setPropertyTypeCode(String propertyTypeCode) {
-        this.propertyTypeCode = propertyTypeCode;
-    }
-
-    public String getPropertyTypeDescription() {
-        return propertyTypeDescription;
-    }
-
-    public void setPropertyTypeDescription(String propertyTypeDescription) {
-        this.propertyTypeDescription = propertyTypeDescription;
-    }
-
-    public BigDecimal getSurfaceArea() {
-        return surfaceArea;
-    }
-
-    public void setSurfaceArea(BigDecimal surfaceArea) {
-        this.surfaceArea = surfaceArea;
-    }
-
     public Integer getConstructionYear() {
         return constructionYear;
     }
 
     public void setConstructionYear(Integer constructionYear) {
         this.constructionYear = constructionYear;
+    }
+
+    public BigDecimal getConstructedSurface() {
+        return constructedSurface;
+    }
+
+    public void setConstructedSurface(BigDecimal constructedSurface) {
+        this.constructedSurface = constructedSurface;
+    }
+
+    public BigDecimal getLandSurface() {
+        return landSurface;
+    }
+
+    public void setLandSurface(BigDecimal landSurface) {
+        this.landSurface = landSurface;
     }
 
     public String getRentalIndicator() {
@@ -311,30 +347,6 @@ public class UrbanPropertyDTO {
         this.maxSalePrice = maxSalePrice;
     }
 
-    public String getDisqualificationIndicator() {
-        return disqualificationIndicator;
-    }
-
-    public void setDisqualificationIndicator(String disqualificationIndicator) {
-        this.disqualificationIndicator = disqualificationIndicator;
-    }
-
-    public String getHabitualResidenceIndicator() {
-        return habitualResidenceIndicator;
-    }
-
-    public void setHabitualResidenceIndicator(String habitualResidenceIndicator) {
-        this.habitualResidenceIndicator = habitualResidenceIndicator;
-    }
-
-    public BigDecimal getHabitualResidenceValue() {
-        return habitualResidenceValue;
-    }
-
-    public void setHabitualResidenceValue(BigDecimal habitualResidenceValue) {
-        this.habitualResidenceValue = habitualResidenceValue;
-    }
-
     public BigDecimal getDeclaredValue() {
         return declaredValue;
     }
@@ -359,20 +371,44 @@ public class UrbanPropertyDTO {
         this.referenceValue = referenceValue;
     }
 
-    public BigDecimal getEstimatedValue() {
-        return estimatedValue;
-    }
-
-    public void setEstimatedValue(BigDecimal estimatedValue) {
-        this.estimatedValue = estimatedValue;
-    }
-
     public String getConformityIndicator() {
         return conformityIndicator;
     }
 
     public void setConformityIndicator(String conformityIndicator) {
         this.conformityIndicator = conformityIndicator;
+    }
+
+    public String getReferenceValueSituation() {
+        return referenceValueSituation;
+    }
+
+    public void setReferenceValueSituation(String referenceValueSituation) {
+        this.referenceValueSituation = referenceValueSituation;
+    }
+
+    public String getReferenceValueIndicator() {
+        return referenceValueIndicator;
+    }
+
+    public void setReferenceValueIndicator(String referenceValueIndicator) {
+        this.referenceValueIndicator = referenceValueIndicator;
+    }
+
+    public String getValidReferenceValueIndicator() {
+        return validReferenceValueIndicator;
+    }
+
+    public void setValidReferenceValueIndicator(String validReferenceValueIndicator) {
+        this.validReferenceValueIndicator = validReferenceValueIndicator;
+    }
+
+    public String getBdbiValueIndicator() {
+        return bdbiValueIndicator;
+    }
+
+    public void setBdbiValueIndicator(String bdbiValueIndicator) {
+        this.bdbiValueIndicator = bdbiValueIndicator;
     }
 
     public String getUrbanZoneCode() {
@@ -391,11 +427,19 @@ public class UrbanPropertyDTO {
         this.sectorCode = sectorCode;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public BigDecimal getCadastralValue() {
+        return cadastralValue;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+    public void setCadastralValue(BigDecimal cadastralValue) {
+        this.cadastralValue = cadastralValue;
+    }
+
+    public BigDecimal getParticipationPercentage() {
+        return participationPercentage;
+    }
+
+    public void setParticipationPercentage(BigDecimal participationPercentage) {
+        this.participationPercentage = participationPercentage;
     }
 }

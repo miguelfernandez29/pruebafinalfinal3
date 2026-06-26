@@ -1,19 +1,27 @@
 package com.example.app.controller;
 
-import com.example.app.dto.AssetCauseDTO;
+import com.example.app.dto.AssetCauseDto;
 import com.example.app.service.AssetCauseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/asset-causes")
-@Tag(name = "Asset Causes", description = "Asset cause management APIs")
+@Tag(name = "Asset Cause", description = "Asset Cause management APIs")
 public class AssetCauseRestController {
 
     private final AssetCauseService assetCauseService;
@@ -24,77 +32,80 @@ public class AssetCauseRestController {
 
     @GetMapping
     @Operation(summary = "Get all asset causes")
-    public ResponseEntity<List<AssetCauseDTO>> findAll() {
+    public ResponseEntity<List<AssetCauseDto>> findAll() {
         return ResponseEntity.ok(assetCauseService.findAll());
     }
 
-    @GetMapping("/{presentationYear}/{taxType}/{presentationCode}/{taxpayerNif}/{assetSequence}")
+    @GetMapping("/{presentationYear}/{taxTypeCode}/{presentationCode}/{causeNif}/{subCauseCode}/{assetSequence}")
     @Operation(summary = "Get asset cause by ID")
-    public ResponseEntity<AssetCauseDTO> findById(
+    public ResponseEntity<AssetCauseDto> findById(
             @PathVariable Integer presentationYear,
-            @PathVariable String taxType,
+            @PathVariable String taxTypeCode,
             @PathVariable String presentationCode,
-            @PathVariable String taxpayerNif,
+            @PathVariable String causeNif,
+            @PathVariable String subCauseCode,
             @PathVariable Integer assetSequence) {
-        return assetCauseService.findById(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(assetCauseService.findById(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence));
     }
 
-    @GetMapping("/declaration/{presentationYear}/{taxType}/{presentationCode}/{taxpayerNif}")
+    @GetMapping("/declaration")
     @Operation(summary = "Get asset causes by declaration")
-    public ResponseEntity<List<AssetCauseDTO>> findByDeclaration(
-            @PathVariable Integer presentationYear,
-            @PathVariable String taxType,
-            @PathVariable String presentationCode,
-            @PathVariable String taxpayerNif) {
-        return ResponseEntity.ok(assetCauseService.findByDeclaration(presentationYear, taxType, presentationCode, taxpayerNif));
-    }
-
-    @GetMapping("/next-sequence/{presentationYear}/{taxType}/{presentationCode}/{taxpayerNif}")
-    @Operation(summary = "Get next asset sequence number")
-    public ResponseEntity<Integer> getNextSequence(
-            @PathVariable Integer presentationYear,
-            @PathVariable String taxType,
-            @PathVariable String presentationCode,
-            @PathVariable String taxpayerNif) {
-        return ResponseEntity.ok(assetCauseService.getNextAssetSequence(presentationYear, taxType, presentationCode, taxpayerNif));
+    public ResponseEntity<List<AssetCauseDto>> findByDeclaration(
+            @RequestParam Integer presentationYear,
+            @RequestParam String taxTypeCode,
+            @RequestParam String presentationCode,
+            @RequestParam String causeNif,
+            @RequestParam String subCauseCode) {
+        return ResponseEntity.ok(assetCauseService.findByDeclaration(presentationYear, taxTypeCode,
+                presentationCode, causeNif, subCauseCode));
     }
 
     @PostMapping
-    @Operation(summary = "Create new asset cause")
-    public ResponseEntity<AssetCauseDTO> create(@Valid @RequestBody AssetCauseDTO dto) {
-        AssetCauseDTO saved = assetCauseService.save(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    @Operation(summary = "Create a new asset cause")
+    public ResponseEntity<AssetCauseDto> create(@Valid @RequestBody AssetCauseDto dto) {
+        return new ResponseEntity<>(assetCauseService.create(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{presentationYear}/{taxType}/{presentationCode}/{taxpayerNif}/{assetSequence}")
-    @Operation(summary = "Update asset cause")
-    public ResponseEntity<AssetCauseDTO> update(
+    @PutMapping("/{presentationYear}/{taxTypeCode}/{presentationCode}/{causeNif}/{subCauseCode}/{assetSequence}")
+    @Operation(summary = "Update an asset cause")
+    public ResponseEntity<AssetCauseDto> update(
             @PathVariable Integer presentationYear,
-            @PathVariable String taxType,
+            @PathVariable String taxTypeCode,
             @PathVariable String presentationCode,
-            @PathVariable String taxpayerNif,
+            @PathVariable String causeNif,
+            @PathVariable String subCauseCode,
             @PathVariable Integer assetSequence,
-            @Valid @RequestBody AssetCauseDTO dto) {
-        dto.setPresentationYear(presentationYear);
-        dto.setTaxType(taxType);
-        dto.setPresentationCode(presentationCode);
-        dto.setTaxpayerNif(taxpayerNif);
-        dto.setAssetSequence(assetSequence);
-        AssetCauseDTO updated = assetCauseService.save(dto);
-        return ResponseEntity.ok(updated);
+            @Valid @RequestBody AssetCauseDto dto) {
+        return ResponseEntity.ok(assetCauseService.update(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence, dto));
     }
 
-    @DeleteMapping("/{presentationYear}/{taxType}/{presentationCode}/{taxpayerNif}/{assetSequence}")
-    @Operation(summary = "Delete asset cause")
+    @DeleteMapping("/{presentationYear}/{taxTypeCode}/{presentationCode}/{causeNif}/{subCauseCode}/{assetSequence}")
+    @Operation(summary = "Delete an asset cause")
     public ResponseEntity<Void> delete(
             @PathVariable Integer presentationYear,
-            @PathVariable String taxType,
+            @PathVariable String taxTypeCode,
             @PathVariable String presentationCode,
-            @PathVariable String taxpayerNif,
+            @PathVariable String causeNif,
+            @PathVariable String subCauseCode,
             @PathVariable Integer assetSequence) {
-        assetCauseService.deleteById(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence);
+        assetCauseService.delete(presentationYear, taxTypeCode, presentationCode, causeNif, subCauseCode, assetSequence);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{presentationYear}/{taxTypeCode}/{presentationCode}/{causeNif}/{subCauseCode}/{assetSequence}/conformity")
+    @Operation(summary = "Update conformity status")
+    public ResponseEntity<Void> updateConformity(
+            @PathVariable Integer presentationYear,
+            @PathVariable String taxTypeCode,
+            @PathVariable String presentationCode,
+            @PathVariable String causeNif,
+            @PathVariable String subCauseCode,
+            @PathVariable Integer assetSequence,
+            @RequestParam String conformityIndicator) {
+        assetCauseService.updateConformityStatus(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence, conformityIndicator);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,26 +1,19 @@
 package com.example.app.service;
 
-import com.example.app.dto.UrbanPropertyDTO;
+import com.example.app.dto.UrbanPropertyDto;
 import com.example.app.entity.UrbanProperty;
 import com.example.app.entity.UrbanPropertyId;
+import com.example.app.exception.BusinessValidationException;
+import com.example.app.exception.InvalidCadastralReferenceException;
+import com.example.app.exception.ResourceNotFoundException;
 import com.example.app.repository.UrbanPropertyRepository;
-import com.example.app.repository.ProvinceRepository;
-import com.example.app.repository.MunicipalityRepository;
-import com.example.app.repository.PropertyTypeRepository;
-import com.example.app.entity.Province;
-import com.example.app.entity.Municipality;
-import com.example.app.entity.MunicipalityId;
-import com.example.app.entity.PropertyType;
-import com.example.app.entity.PropertyTypeId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,262 +21,235 @@ import java.util.stream.Collectors;
 public class UrbanPropertyService {
 
     private final UrbanPropertyRepository urbanPropertyRepository;
-    private final ProvinceRepository provinceRepository;
-    private final MunicipalityRepository municipalityRepository;
-    private final PropertyTypeRepository propertyTypeRepository;
 
-    public UrbanPropertyService(UrbanPropertyRepository urbanPropertyRepository,
-                                ProvinceRepository provinceRepository,
-                                MunicipalityRepository municipalityRepository,
-                                PropertyTypeRepository propertyTypeRepository) {
+    public UrbanPropertyService(UrbanPropertyRepository urbanPropertyRepository) {
         this.urbanPropertyRepository = urbanPropertyRepository;
-        this.provinceRepository = provinceRepository;
-        this.municipalityRepository = municipalityRepository;
-        this.propertyTypeRepository = propertyTypeRepository;
     }
 
-    public List<UrbanPropertyDTO> findAll() {
+    public List<UrbanPropertyDto> findAll() {
         return urbanPropertyRepository.findAll().stream()
-                .map(this::toDTO)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    public Optional<UrbanPropertyDTO> findById(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif, Integer assetSequence) {
-        UrbanPropertyId id = new UrbanPropertyId(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence);
-        return urbanPropertyRepository.findById(id).map(this::toDTO);
+    public UrbanPropertyDto findById(Integer presentationYear, String taxTypeCode, String presentationCode,
+                                      String causeNif, String subCauseCode, Integer assetSequence) {
+        UrbanPropertyId id = new UrbanPropertyId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        UrbanProperty entity = urbanPropertyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UrbanProperty", "id", id));
+        return toDto(entity);
     }
 
-    public List<UrbanPropertyDTO> findByDeclaration(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif) {
-        return urbanPropertyRepository.findByPresentationYearAndTaxTypeAndPresentationCodeAndTaxpayerNif(
-                presentationYear, taxType, presentationCode, taxpayerNif)
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public UrbanPropertyDTO save(UrbanPropertyDTO dto) {
-        validateProvinceCode(dto.getProvinceCode());
-        validateMunicipalityCode(dto.getProvinceCode(), dto.getMunicipalityCode());
-        validatePropertyTypeCode(dto.getPropertyTypeCode());
-        validateCadastralReference(dto.getCadastralReference());
-        validateConstructionYear(dto.getConstructionYear());
-        validateRentalContractYear(dto.getRentalContractYear(), dto.getRentalIndicator());
-        validateHabitualResidenceValue(dto.getHabitualResidenceValue(), dto.getHabitualResidenceIndicator(), dto.getVerifiedValue());
-        validateDeclaredValue(dto.getDeclaredValue());
-        validateIndicators(dto);
-
-        populateDescriptions(dto);
-        calculateConformity(dto);
-
+    public UrbanPropertyDto create(UrbanPropertyDto dto) {
+        validateUrbanProperty(dto);
         UrbanProperty entity = toEntity(dto);
+        calculateConformity(entity);
         UrbanProperty saved = urbanPropertyRepository.save(entity);
-        return toDTO(saved);
+        return toDto(saved);
     }
 
-    public void deleteById(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif, Integer assetSequence) {
-        UrbanPropertyId id = new UrbanPropertyId(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence);
-        urbanPropertyRepository.deleteById(id);
+    public UrbanPropertyDto update(Integer presentationYear, String taxTypeCode, String presentationCode,
+                                    String causeNif, String subCauseCode, Integer assetSequence,
+                                    UrbanPropertyDto dto) {
+        UrbanPropertyId id = new UrbanPropertyId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        UrbanProperty existing = urbanPropertyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UrbanProperty", "id", id));
+        
+        validateUrbanProperty(dto);
+        updateEntityFromDto(existing, dto);
+        calculateConformity(existing);
+        
+        UrbanProperty saved = urbanPropertyRepository.save(existing);
+        return toDto(saved);
     }
 
-    private void validateProvinceCode(String provinceCode) {
-        if (provinceCode == null) {
-            throw new IllegalArgumentException("El campo \"Provincia\" es obligatorio.");
-        }
-        if (!provinceRepository.existsById(provinceCode)) {
-            throw new IllegalArgumentException("Provincia no encontrada.");
-        }
+    public void delete(Integer presentationYear, String taxTypeCode, String presentationCode,
+                       String causeNif, String subCauseCode, Integer assetSequence) {
+        UrbanPropertyId id = new UrbanPropertyId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        UrbanProperty existing = urbanPropertyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UrbanProperty", "id", id));
+        urbanPropertyRepository.delete(existing);
     }
 
-    private void validateMunicipalityCode(String provinceCode, String municipalityCode) {
-        if (municipalityCode != null && provinceCode != null) {
-            MunicipalityId id = new MunicipalityId(provinceCode, municipalityCode);
-            if (!municipalityRepository.existsById(id)) {
-                throw new IllegalArgumentException("Municipio no encontrado para la provincia indicada.");
+    public List<UrbanPropertyDto> findByCadastralReference(String cadastralReference) {
+        return urbanPropertyRepository.findByCadastralReference(cadastralReference).stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<UrbanPropertyDto> findByProvinceAndMunicipality(String provinceCode, String municipalityCode) {
+        return urbanPropertyRepository.findByProvinceAndMunicipality(provinceCode, municipalityCode).stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    private void validateUrbanProperty(UrbanPropertyDto dto) {
+        if (dto.getCadastralReference() != null) {
+            String ref = dto.getCadastralReference().replaceAll("\\s+", "");
+            if (ref.length() != 20) {
+                throw new InvalidCadastralReferenceException(dto.getCadastralReference(),
+                        "20 alphanumeric characters");
             }
         }
-    }
-
-    private void validatePropertyTypeCode(String propertyTypeCode) {
-        if (propertyTypeCode != null) {
-            PropertyTypeId id = new PropertyTypeId("U", propertyTypeCode);
-            if (!propertyTypeRepository.existsById(id)) {
-                throw new IllegalArgumentException("Tipo de bien no encontrado.");
-            }
+        
+        if (dto.getProvinceCode() != null && dto.getProvinceCode().length() > 2) {
+            throw new BusinessValidationException("INVALID_PROVINCE", "provinceCode",
+                    "Province code must be 2 characters");
         }
-    }
-
-    private void validateCadastralReference(String cadastralReference) {
-        if (cadastralReference != null) {
-            String cleaned = cadastralReference.trim().replace(" ", "");
-            if (cleaned.length() != 20 && cleaned.length() != 14) {
-                throw new IllegalArgumentException("Referencia catastral no valida.");
-            }
+        
+        if (dto.getMunicipalityCode() != null && dto.getMunicipalityCode().length() > 3) {
+            throw new BusinessValidationException("INVALID_MUNICIPALITY", "municipalityCode",
+                    "Municipality code must be 3 characters");
         }
-    }
-
-    private void validateConstructionYear(Integer constructionYear) {
-        if (constructionYear != null) {
+        
+        if (dto.getConstructionYear() != null) {
             int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            if (constructionYear < 1500 || constructionYear > currentYear) {
-                throw new IllegalArgumentException("El ano de construccion debe de estar entre 1500 y el ano actual.");
+            if (dto.getConstructionYear() < 1500 || dto.getConstructionYear() > currentYear) {
+                throw new BusinessValidationException("INVALID_YEAR", "constructionYear",
+                        "Construction year must be between 1500 and current year");
+            }
+        }
+        
+        if (dto.getRentalIndicator() != null) {
+            if (!"S".equals(dto.getRentalIndicator()) && !"N".equals(dto.getRentalIndicator())) {
+                throw new BusinessValidationException("INVALID_INDICATOR", "rentalIndicator",
+                        "Rental indicator must be S or N");
+            }
+        }
+        
+        if (dto.getOfficialProtectionIndicator() != null) {
+            if (!"S".equals(dto.getOfficialProtectionIndicator()) && 
+                !"N".equals(dto.getOfficialProtectionIndicator())) {
+                throw new BusinessValidationException("INVALID_INDICATOR", "officialProtectionIndicator",
+                        "Official protection indicator must be S or N");
+            }
+        }
+        
+        if (dto.getDeclaredValue() != null && dto.getDeclaredValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessValidationException("INVALID_VALUE", "declaredValue",
+                    "Declared value must be positive");
+        }
+        
+        if (dto.getPostalCode() != null && dto.getProvinceCode() != null) {
+            if (!dto.getPostalCode().startsWith(dto.getProvinceCode())) {
+                throw new BusinessValidationException("INVALID_POSTAL_CODE", "postalCode",
+                        "Postal code must start with province code");
             }
         }
     }
 
-    private void validateRentalContractYear(Integer rentalContractYear, String rentalIndicator) {
-        if (rentalContractYear != null) {
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            if (rentalContractYear < 1500 || rentalContractYear > currentYear) {
-                throw new IllegalArgumentException("El ano de contrato debe de estar entre 1500 y el ano actual.");
-            }
-            if (!"S".equals(rentalIndicator)) {
-                throw new IllegalArgumentException("El ano de contrato requiere indicador de arrendamiento.");
-            }
-        }
-    }
-
-    private void validateHabitualResidenceValue(BigDecimal habitualResidenceValue, String habitualResidenceIndicator, BigDecimal verifiedValue) {
-        if (habitualResidenceValue != null && verifiedValue != null) {
-            if (habitualResidenceValue.compareTo(verifiedValue) > 0) {
-                throw new IllegalArgumentException("El valor de vivienda habitual no puede exceder el valor comprobado.");
-            }
-        }
-    }
-
-    private void validateDeclaredValue(BigDecimal declaredValue) {
-        if (declaredValue != null && declaredValue.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("El valor declarado debe ser positivo.");
-        }
-    }
-
-    private void validateIndicators(UrbanPropertyDTO dto) {
-        if (dto.getRentalIndicator() != null && !dto.getRentalIndicator().matches("[SN]")) {
-            throw new IllegalArgumentException("Valores permitidos para arrendamiento: S o N.");
-        }
-        if (dto.getOfficialProtectionIndicator() != null && !dto.getOfficialProtectionIndicator().matches("[SN]")) {
-            throw new IllegalArgumentException("Valores permitidos para proteccion oficial: S o N.");
-        }
-        if (dto.getDisqualificationIndicator() != null && !dto.getDisqualificationIndicator().matches("[SN]")) {
-            throw new IllegalArgumentException("Valores permitidos para descalificacion: S o N.");
-        }
-        if (dto.getHabitualResidenceIndicator() != null && !dto.getHabitualResidenceIndicator().matches("[SN]")) {
-            throw new IllegalArgumentException("Valores permitidos para vivienda habitual: S o N.");
-        }
-    }
-
-    private void populateDescriptions(UrbanPropertyDTO dto) {
-        if (dto.getProvinceCode() != null) {
-            provinceRepository.findById(dto.getProvinceCode())
-                    .ifPresent(p -> dto.setProvinceDescription(p.getProvinceDescription()));
-        }
-        if (dto.getProvinceCode() != null && dto.getMunicipalityCode() != null) {
-            MunicipalityId mId = new MunicipalityId(dto.getProvinceCode(), dto.getMunicipalityCode());
-            municipalityRepository.findById(mId)
-                    .ifPresent(m -> dto.setMunicipalityDescription(m.getMunicipalityDescription()));
-        }
-        if (dto.getPropertyTypeCode() != null) {
-            PropertyTypeId ptId = new PropertyTypeId("U", dto.getPropertyTypeCode());
-            propertyTypeRepository.findById(ptId)
-                    .ifPresent(pt -> dto.setPropertyTypeDescription(pt.getPropertyTypeDescription()));
-        }
-        if (dto.getCountryCode() == null) {
-            dto.setCountryCode("ESP");
-        }
-    }
-
-    private void calculateConformity(UrbanPropertyDTO dto) {
-        if (dto.getReferenceValue() != null && dto.getDeclaredValue() != null) {
-            if (dto.getDeclaredValue().compareTo(dto.getReferenceValue()) >= 0) {
-                dto.setConformityIndicator("S");
-                dto.setVerifiedValue(dto.getDeclaredValue());
+    private void calculateConformity(UrbanProperty entity) {
+        if ("S".equals(entity.getReferenceValueIndicator()) &&
+            "S".equals(entity.getValidReferenceValueIndicator()) &&
+            entity.getReferenceValue() != null &&
+            entity.getDeclaredValue() != null) {
+            
+            if (entity.getDeclaredValue().compareTo(entity.getReferenceValue()) >= 0) {
+                entity.setConformityIndicator("S");
+                entity.setVerifiedValue(entity.getDeclaredValue());
             } else {
-                dto.setConformityIndicator("N");
-                if (dto.getVerifiedValue() == null) {
-                    dto.setVerifiedValue(dto.getReferenceValue());
+                entity.setConformityIndicator("N");
+                if (entity.getVerifiedValue() == null) {
+                    entity.setVerifiedValue(entity.getReferenceValue());
                 }
             }
         }
     }
 
-    private UrbanPropertyDTO toDTO(UrbanProperty entity) {
-        UrbanPropertyDTO dto = new UrbanPropertyDTO();
+    private UrbanPropertyDto toDto(UrbanProperty entity) {
+        UrbanPropertyDto dto = new UrbanPropertyDto();
         dto.setPresentationYear(entity.getPresentationYear());
-        dto.setTaxType(entity.getTaxType());
+        dto.setTaxTypeCode(entity.getTaxTypeCode());
         dto.setPresentationCode(entity.getPresentationCode());
-        dto.setTaxpayerNif(entity.getTaxpayerNif());
+        dto.setCauseNif(entity.getCauseNif());
+        dto.setSubCauseCode(entity.getSubCauseCode());
         dto.setAssetSequence(entity.getAssetSequence());
+        dto.setPropertyTypeCode(entity.getPropertyTypeCode());
+        dto.setPropertyTypeDescription(entity.getPropertyTypeDescription());
+        dto.setCadastralReference(entity.getCadastralReference());
         dto.setProvinceCode(entity.getProvinceCode());
         dto.setProvinceDescription(entity.getProvinceDescription());
         dto.setMunicipalityCode(entity.getMunicipalityCode());
         dto.setMunicipalityDescription(entity.getMunicipalityDescription());
         dto.setPostalCode(entity.getPostalCode());
         dto.setStreetTypeCode(entity.getStreetTypeCode());
+        dto.setStreetTypeDescription(entity.getStreetTypeDescription());
         dto.setStreetName(entity.getStreetName());
         dto.setStreetNumber(entity.getStreetNumber());
         dto.setStairway(entity.getStairway());
         dto.setFloor(entity.getFloor());
         dto.setDoor(entity.getDoor());
-        dto.setCadastralReference(entity.getCadastralReference());
-        dto.setPropertyTypeCode(entity.getPropertyTypeCode());
-        dto.setPropertyTypeDescription(entity.getPropertyTypeDescription());
-        dto.setSurfaceArea(entity.getSurfaceArea());
         dto.setConstructionYear(entity.getConstructionYear());
+        dto.setConstructedSurface(entity.getConstructedSurface());
+        dto.setLandSurface(entity.getLandSurface());
         dto.setRentalIndicator(entity.getRentalIndicator());
         dto.setRentalContractYear(entity.getRentalContractYear());
         dto.setOfficialProtectionIndicator(entity.getOfficialProtectionIndicator());
         dto.setMaxSalePrice(entity.getMaxSalePrice());
-        dto.setDisqualificationIndicator(entity.getDisqualificationIndicator());
-        dto.setHabitualResidenceIndicator(entity.getHabitualResidenceIndicator());
-        dto.setHabitualResidenceValue(entity.getHabitualResidenceValue());
         dto.setDeclaredValue(entity.getDeclaredValue());
         dto.setVerifiedValue(entity.getVerifiedValue());
         dto.setReferenceValue(entity.getReferenceValue());
-        dto.setEstimatedValue(entity.getEstimatedValue());
         dto.setConformityIndicator(entity.getConformityIndicator());
+        dto.setReferenceValueSituation(entity.getReferenceValueSituation());
+        dto.setReferenceValueIndicator(entity.getReferenceValueIndicator());
+        dto.setValidReferenceValueIndicator(entity.getValidReferenceValueIndicator());
+        dto.setBdbiValueIndicator(entity.getBdbiValueIndicator());
         dto.setUrbanZoneCode(entity.getUrbanZoneCode());
         dto.setSectorCode(entity.getSectorCode());
-        dto.setCountryCode(entity.getCountryCode());
+        dto.setCadastralValue(entity.getCadastralValue());
+        dto.setParticipationPercentage(entity.getParticipationPercentage());
         return dto;
     }
 
-    private UrbanProperty toEntity(UrbanPropertyDTO dto) {
+    private UrbanProperty toEntity(UrbanPropertyDto dto) {
         UrbanProperty entity = new UrbanProperty();
         entity.setPresentationYear(dto.getPresentationYear());
-        entity.setTaxType(dto.getTaxType());
+        entity.setTaxTypeCode(dto.getTaxTypeCode());
         entity.setPresentationCode(dto.getPresentationCode());
-        entity.setTaxpayerNif(dto.getTaxpayerNif());
+        entity.setCauseNif(dto.getCauseNif());
+        entity.setSubCauseCode(dto.getSubCauseCode());
         entity.setAssetSequence(dto.getAssetSequence());
+        updateEntityFromDto(entity, dto);
+        return entity;
+    }
+
+    private void updateEntityFromDto(UrbanProperty entity, UrbanPropertyDto dto) {
+        entity.setPropertyTypeCode(dto.getPropertyTypeCode());
+        entity.setPropertyTypeDescription(dto.getPropertyTypeDescription());
+        entity.setCadastralReference(dto.getCadastralReference());
         entity.setProvinceCode(dto.getProvinceCode());
         entity.setProvinceDescription(dto.getProvinceDescription());
         entity.setMunicipalityCode(dto.getMunicipalityCode());
         entity.setMunicipalityDescription(dto.getMunicipalityDescription());
         entity.setPostalCode(dto.getPostalCode());
         entity.setStreetTypeCode(dto.getStreetTypeCode());
+        entity.setStreetTypeDescription(dto.getStreetTypeDescription());
         entity.setStreetName(dto.getStreetName());
         entity.setStreetNumber(dto.getStreetNumber());
         entity.setStairway(dto.getStairway());
         entity.setFloor(dto.getFloor());
         entity.setDoor(dto.getDoor());
-        entity.setCadastralReference(dto.getCadastralReference());
-        entity.setPropertyTypeCode(dto.getPropertyTypeCode());
-        entity.setPropertyTypeDescription(dto.getPropertyTypeDescription());
-        entity.setSurfaceArea(dto.getSurfaceArea());
         entity.setConstructionYear(dto.getConstructionYear());
+        entity.setConstructedSurface(dto.getConstructedSurface());
+        entity.setLandSurface(dto.getLandSurface());
         entity.setRentalIndicator(dto.getRentalIndicator());
         entity.setRentalContractYear(dto.getRentalContractYear());
         entity.setOfficialProtectionIndicator(dto.getOfficialProtectionIndicator());
         entity.setMaxSalePrice(dto.getMaxSalePrice());
-        entity.setDisqualificationIndicator(dto.getDisqualificationIndicator());
-        entity.setHabitualResidenceIndicator(dto.getHabitualResidenceIndicator());
-        entity.setHabitualResidenceValue(dto.getHabitualResidenceValue());
         entity.setDeclaredValue(dto.getDeclaredValue());
         entity.setVerifiedValue(dto.getVerifiedValue());
         entity.setReferenceValue(dto.getReferenceValue());
-        entity.setEstimatedValue(dto.getEstimatedValue());
         entity.setConformityIndicator(dto.getConformityIndicator());
+        entity.setReferenceValueSituation(dto.getReferenceValueSituation());
+        entity.setReferenceValueIndicator(dto.getReferenceValueIndicator());
+        entity.setValidReferenceValueIndicator(dto.getValidReferenceValueIndicator());
+        entity.setBdbiValueIndicator(dto.getBdbiValueIndicator());
         entity.setUrbanZoneCode(dto.getUrbanZoneCode());
         entity.setSectorCode(dto.getSectorCode());
-        entity.setCountryCode(dto.getCountryCode());
-        return entity;
+        entity.setCadastralValue(dto.getCadastralValue());
+        entity.setParticipationPercentage(dto.getParticipationPercentage());
     }
 }

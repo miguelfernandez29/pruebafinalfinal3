@@ -4,14 +4,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
-public class OtherAssetDTO {
+public class OtherAssetDto {
 
     @NotNull
     private Integer presentationYear;
 
     @NotNull
     @Size(max = 2)
-    private String taxType;
+    private String taxTypeCode;
 
     @NotNull
     @Size(max = 14)
@@ -19,24 +19,29 @@ public class OtherAssetDTO {
 
     @NotNull
     @Size(max = 9)
-    private String taxpayerNif;
+    private String causeNif;
+
+    @NotNull
+    @Size(max = 2)
+    private String subCauseCode;
 
     @NotNull
     private Integer assetSequence;
 
-    @Size(max = 500)
-    private String assetDescription;
+    @Size(max = 3)
+    private String assetTypeCode;
 
-    private BigDecimal numberOfUnits;
+    @Size(max = 100)
+    private String assetTypeDescription;
+
+    @Size(max = 500)
+    private String description;
 
     private BigDecimal declaredValue;
 
     private BigDecimal verifiedValue;
 
-    @Size(max = 1)
-    private String conformityIndicator;
-
-    public OtherAssetDTO() {
+    public OtherAssetDto() {
     }
 
     public Integer getPresentationYear() {
@@ -47,12 +52,12 @@ public class OtherAssetDTO {
         this.presentationYear = presentationYear;
     }
 
-    public String getTaxType() {
-        return taxType;
+    public String getTaxTypeCode() {
+        return taxTypeCode;
     }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
+    public void setTaxTypeCode(String taxTypeCode) {
+        this.taxTypeCode = taxTypeCode;
     }
 
     public String getPresentationCode() {
@@ -63,12 +68,20 @@ public class OtherAssetDTO {
         this.presentationCode = presentationCode;
     }
 
-    public String getTaxpayerNif() {
-        return taxpayerNif;
+    public String getCauseNif() {
+        return causeNif;
     }
 
-    public void setTaxpayerNif(String taxpayerNif) {
-        this.taxpayerNif = taxpayerNif;
+    public void setCauseNif(String causeNif) {
+        this.causeNif = causeNif;
+    }
+
+    public String getSubCauseCode() {
+        return subCauseCode;
+    }
+
+    public void setSubCauseCode(String subCauseCode) {
+        this.subCauseCode = subCauseCode;
     }
 
     public Integer getAssetSequence() {
@@ -79,20 +92,28 @@ public class OtherAssetDTO {
         this.assetSequence = assetSequence;
     }
 
-    public String getAssetDescription() {
-        return assetDescription;
+    public String getAssetTypeCode() {
+        return assetTypeCode;
     }
 
-    public void setAssetDescription(String assetDescription) {
-        this.assetDescription = assetDescription;
+    public void setAssetTypeCode(String assetTypeCode) {
+        this.assetTypeCode = assetTypeCode;
     }
 
-    public BigDecimal getNumberOfUnits() {
-        return numberOfUnits;
+    public String getAssetTypeDescription() {
+        return assetTypeDescription;
     }
 
-    public void setNumberOfUnits(BigDecimal numberOfUnits) {
-        this.numberOfUnits = numberOfUnits;
+    public void setAssetTypeDescription(String assetTypeDescription) {
+        this.assetTypeDescription = assetTypeDescription;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public BigDecimal getDeclaredValue() {
@@ -109,13 +130,5 @@ public class OtherAssetDTO {
 
     public void setVerifiedValue(BigDecimal verifiedValue) {
         this.verifiedValue = verifiedValue;
-    }
-
-    public String getConformityIndicator() {
-        return conformityIndicator;
-    }
-
-    public void setConformityIndicator(String conformityIndicator) {
-        this.conformityIndicator = conformityIndicator;
     }
 }

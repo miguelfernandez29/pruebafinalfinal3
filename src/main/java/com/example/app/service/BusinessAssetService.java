@@ -1,18 +1,16 @@
 package com.example.app.service;
 
-import com.example.app.dto.BusinessAssetDTO;
+import com.example.app.dto.BusinessAssetDto;
 import com.example.app.entity.BusinessAsset;
 import com.example.app.entity.BusinessAssetId;
+import com.example.app.exception.BusinessValidationException;
+import com.example.app.exception.ResourceNotFoundException;
 import com.example.app.repository.BusinessAssetRepository;
-import com.example.app.repository.ProvinceRepository;
-import com.example.app.repository.MunicipalityRepository;
-import com.example.app.entity.MunicipalityId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,131 +18,165 @@ import java.util.stream.Collectors;
 public class BusinessAssetService {
 
     private final BusinessAssetRepository businessAssetRepository;
-    private final ProvinceRepository provinceRepository;
-    private final MunicipalityRepository municipalityRepository;
 
-    public BusinessAssetService(BusinessAssetRepository businessAssetRepository,
-                                ProvinceRepository provinceRepository,
-                                MunicipalityRepository municipalityRepository) {
+    public BusinessAssetService(BusinessAssetRepository businessAssetRepository) {
         this.businessAssetRepository = businessAssetRepository;
-        this.provinceRepository = provinceRepository;
-        this.municipalityRepository = municipalityRepository;
     }
 
-    public List<BusinessAssetDTO> findAll() {
+    public List<BusinessAssetDto> findAll() {
         return businessAssetRepository.findAll().stream()
-                .map(this::toDTO)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    public Optional<BusinessAssetDTO> findById(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif, Integer assetSequence) {
-        BusinessAssetId id = new BusinessAssetId(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence);
-        return businessAssetRepository.findById(id).map(this::toDTO);
+    public BusinessAssetDto findById(Integer presentationYear, String taxTypeCode, String presentationCode,
+                                      String causeNif, String subCauseCode, Integer assetSequence) {
+        BusinessAssetId id = new BusinessAssetId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        BusinessAsset entity = businessAssetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("BusinessAsset", "id", id));
+        return toDto(entity);
     }
 
-    public List<BusinessAssetDTO> findByDeclaration(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif) {
-        return businessAssetRepository.findByPresentationYearAndTaxTypeAndPresentationCodeAndTaxpayerNif(
-                presentationYear, taxType, presentationCode, taxpayerNif)
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public BusinessAssetDTO save(BusinessAssetDTO dto) {
-        validateIndicators(dto);
-        validateDeclaredValue(dto.getDeclaredValue());
-        populateDescriptions(dto);
-
+    public BusinessAssetDto create(BusinessAssetDto dto) {
+        validateBusinessAsset(dto);
         BusinessAsset entity = toEntity(dto);
         BusinessAsset saved = businessAssetRepository.save(entity);
-        return toDTO(saved);
+        return toDto(saved);
     }
 
-    public void deleteById(Integer presentationYear, String taxType, String presentationCode, String taxpayerNif, Integer assetSequence) {
-        BusinessAssetId id = new BusinessAssetId(presentationYear, taxType, presentationCode, taxpayerNif, assetSequence);
-        businessAssetRepository.deleteById(id);
+    public BusinessAssetDto update(Integer presentationYear, String taxTypeCode, String presentationCode,
+                                    String causeNif, String subCauseCode, Integer assetSequence,
+                                    BusinessAssetDto dto) {
+        BusinessAssetId id = new BusinessAssetId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        BusinessAsset existing = businessAssetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("BusinessAsset", "id", id));
+        
+        validateBusinessAsset(dto);
+        updateEntityFromDto(existing, dto);
+        
+        BusinessAsset saved = businessAssetRepository.save(existing);
+        return toDto(saved);
     }
 
-    private void validateIndicators(BusinessAssetDTO dto) {
-        if (dto.getReductionIndicator() != null && !dto.getReductionIndicator().matches("[SN]")) {
-            throw new IllegalArgumentException("Valores permitidos para reduccion: S o N.");
+    public void delete(Integer presentationYear, String taxTypeCode, String presentationCode,
+                       String causeNif, String subCauseCode, Integer assetSequence) {
+        BusinessAssetId id = new BusinessAssetId(presentationYear, taxTypeCode, presentationCode,
+                causeNif, subCauseCode, assetSequence);
+        BusinessAsset existing = businessAssetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("BusinessAsset", "id", id));
+        businessAssetRepository.delete(existing);
+    }
+
+    public List<BusinessAssetDto> findByCompanyNif(String companyNif) {
+        return businessAssetRepository.findByCompanyNif(companyNif).stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<BusinessAssetDto> findBusinessAffectedAssets() {
+        return businessAssetRepository.findBusinessAffectedAssets().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    private void validateBusinessAsset(BusinessAssetDto dto) {
+        if (dto.getCompanyNif() != null && dto.getCompanyNif().length() > 9) {
+            throw new BusinessValidationException("INVALID_NIF", "companyNif",
+                    "Company NIF must be 9 characters or less");
         }
-        if (dto.getAffectationIndicator() != null && !dto.getAffectationIndicator().matches("[SN]")) {
-            throw new IllegalArgumentException("Valores permitidos para afectacion: S o N.");
+        
+        if (dto.getBusinessAffectedIndicator() != null) {
+            if (!"S".equals(dto.getBusinessAffectedIndicator()) && 
+                !"N".equals(dto.getBusinessAffectedIndicator())) {
+                throw new BusinessValidationException("INVALID_INDICATOR", "businessAffectedIndicator",
+                        "Business affected indicator must be S or N");
+            }
+        }
+        
+        if (dto.getReductionIndicator() != null) {
+            if (!"S".equals(dto.getReductionIndicator()) && !"N".equals(dto.getReductionIndicator())) {
+                throw new BusinessValidationException("INVALID_INDICATOR", "reductionIndicator",
+                        "Reduction indicator must be S or N");
+            }
+        }
+        
+        if (dto.getDeclaredValue() != null && dto.getDeclaredValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessValidationException("INVALID_VALUE", "declaredValue",
+                    "Declared value must be positive");
+        }
+        
+        if (dto.getParticipationPercentage() != null) {
+            if (dto.getParticipationPercentage().compareTo(BigDecimal.ZERO) <= 0 ||
+                dto.getParticipationPercentage().compareTo(new BigDecimal("100")) > 0) {
+                throw new BusinessValidationException("INVALID_PERCENTAGE", "participationPercentage",
+                        "Participation percentage must be between 0 and 100");
+            }
         }
     }
 
-    private void validateDeclaredValue(BigDecimal declaredValue) {
-        if (declaredValue != null && declaredValue.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("El valor declarado debe ser positivo.");
-        }
-    }
-
-    private void populateDescriptions(BusinessAssetDTO dto) {
-        if (dto.getProvinceCode() != null) {
-            provinceRepository.findById(dto.getProvinceCode())
-                    .ifPresent(p -> dto.setProvinceDescription(p.getProvinceDescription()));
-        }
-        if (dto.getProvinceCode() != null && dto.getMunicipalityCode() != null) {
-            MunicipalityId mId = new MunicipalityId(dto.getProvinceCode(), dto.getMunicipalityCode());
-            municipalityRepository.findById(mId)
-                    .ifPresent(m -> dto.setMunicipalityDescription(m.getMunicipalityDescription()));
-        }
-    }
-
-    private BusinessAssetDTO toDTO(BusinessAsset entity) {
-        BusinessAssetDTO dto = new BusinessAssetDTO();
+    private BusinessAssetDto toDto(BusinessAsset entity) {
+        BusinessAssetDto dto = new BusinessAssetDto();
         dto.setPresentationYear(entity.getPresentationYear());
-        dto.setTaxType(entity.getTaxType());
+        dto.setTaxTypeCode(entity.getTaxTypeCode());
         dto.setPresentationCode(entity.getPresentationCode());
-        dto.setTaxpayerNif(entity.getTaxpayerNif());
+        dto.setCauseNif(entity.getCauseNif());
+        dto.setSubCauseCode(entity.getSubCauseCode());
         dto.setAssetSequence(entity.getAssetSequence());
-        dto.setActivityCode(entity.getActivityCode());
-        dto.setActivityDescription(entity.getActivityDescription());
-        dto.setEpigraphCode(entity.getEpigraphCode());
-        dto.setEpigraphDescription(entity.getEpigraphDescription());
-        dto.setAssetDescription(entity.getAssetDescription());
+        dto.setAssetTypeCode(entity.getAssetTypeCode());
+        dto.setAssetTypeDescription(entity.getAssetTypeDescription());
+        dto.setCompanyNif(entity.getCompanyNif());
+        dto.setCompanyName(entity.getCompanyName());
         dto.setProvinceCode(entity.getProvinceCode());
         dto.setProvinceDescription(entity.getProvinceDescription());
         dto.setMunicipalityCode(entity.getMunicipalityCode());
         dto.setMunicipalityDescription(entity.getMunicipalityDescription());
         dto.setPostalCode(entity.getPostalCode());
         dto.setStreetTypeCode(entity.getStreetTypeCode());
+        dto.setStreetTypeDescription(entity.getStreetTypeDescription());
         dto.setStreetName(entity.getStreetName());
         dto.setStreetNumber(entity.getStreetNumber());
+        dto.setDescription(entity.getDescription());
+        dto.setBusinessAffectedIndicator(entity.getBusinessAffectedIndicator());
         dto.setReductionIndicator(entity.getReductionIndicator());
-        dto.setAffectationIndicator(entity.getAffectationIndicator());
         dto.setDeclaredValue(entity.getDeclaredValue());
         dto.setVerifiedValue(entity.getVerifiedValue());
-        dto.setConformityIndicator(entity.getConformityIndicator());
+        dto.setParticipationPercentage(entity.getParticipationPercentage());
         return dto;
     }
 
-    private BusinessAsset toEntity(BusinessAssetDTO dto) {
+    private BusinessAsset toEntity(BusinessAssetDto dto) {
         BusinessAsset entity = new BusinessAsset();
         entity.setPresentationYear(dto.getPresentationYear());
-        entity.setTaxType(dto.getTaxType());
+        entity.setTaxTypeCode(dto.getTaxTypeCode());
         entity.setPresentationCode(dto.getPresentationCode());
-        entity.setTaxpayerNif(dto.getTaxpayerNif());
+        entity.setCauseNif(dto.getCauseNif());
+        entity.setSubCauseCode(dto.getSubCauseCode());
         entity.setAssetSequence(dto.getAssetSequence());
-        entity.setActivityCode(dto.getActivityCode());
-        entity.setActivityDescription(dto.getActivityDescription());
-        entity.setEpigraphCode(dto.getEpigraphCode());
-        entity.setEpigraphDescription(dto.getEpigraphDescription());
-        entity.setAssetDescription(dto.getAssetDescription());
+        updateEntityFromDto(entity, dto);
+        return entity;
+    }
+
+    private void updateEntityFromDto(BusinessAsset entity, BusinessAssetDto dto) {
+        entity.setAssetTypeCode(dto.getAssetTypeCode());
+        entity.setAssetTypeDescription(dto.getAssetTypeDescription());
+        entity.setCompanyNif(dto.getCompanyNif());
+        entity.setCompanyName(dto.getCompanyName());
         entity.setProvinceCode(dto.getProvinceCode());
         entity.setProvinceDescription(dto.getProvinceDescription());
         entity.setMunicipalityCode(dto.getMunicipalityCode());
         entity.setMunicipalityDescription(dto.getMunicipalityDescription());
         entity.setPostalCode(dto.getPostalCode());
         entity.setStreetTypeCode(dto.getStreetTypeCode());
+        entity.setStreetTypeDescription(dto.getStreetTypeDescription());
         entity.setStreetName(dto.getStreetName());
         entity.setStreetNumber(dto.getStreetNumber());
+        entity.setDescription(dto.getDescription());
+        entity.setBusinessAffectedIndicator(dto.getBusinessAffectedIndicator());
         entity.setReductionIndicator(dto.getReductionIndicator());
-        entity.setAffectationIndicator(dto.getAffectationIndicator());
         entity.setDeclaredValue(dto.getDeclaredValue());
         entity.setVerifiedValue(dto.getVerifiedValue());
-        entity.setConformityIndicator(dto.getConformityIndicator());
-        return entity;
+        entity.setParticipationPercentage(dto.getParticipationPercentage());
     }
 }

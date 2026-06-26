@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ListedSecuritiesRepository extends JpaRepository<ListedSecurities, ListedSecuritiesId> {
 
-    List<ListedSecurities> findByPresentationYearAndTaxTypeAndPresentationCodeAndTaxpayerNif(
-            Integer presentationYear, String taxType, String presentationCode, String taxpayerNif);
+    Optional<ListedSecurities> findByPresentationYearAndTaxTypeCodeAndPresentationCodeAndCauseNifAndSubCauseCodeAndAssetSequence(
+            Integer presentationYear, String taxTypeCode, String presentationCode,
+            String causeNif, String subCauseCode, Integer assetSequence);
+
+    List<ListedSecurities> findByIsinCode(String isinCode);
 }

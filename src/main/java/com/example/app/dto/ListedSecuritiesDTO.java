@@ -3,15 +3,16 @@ package com.example.app.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Date;
 
-public class ListedSecuritiesDTO {
+public class ListedSecuritiesDto {
 
     @NotNull
     private Integer presentationYear;
 
     @NotNull
     @Size(max = 2)
-    private String taxType;
+    private String taxTypeCode;
 
     @NotNull
     @Size(max = 14)
@@ -19,26 +20,40 @@ public class ListedSecuritiesDTO {
 
     @NotNull
     @Size(max = 9)
-    private String taxpayerNif;
+    private String causeNif;
+
+    @NotNull
+    @Size(max = 2)
+    private String subCauseCode;
 
     @NotNull
     private Integer assetSequence;
 
-    @Size(max = 500)
-    private String assetDescription;
+    @Size(max = 3)
+    private String assetTypeCode;
+
+    @Size(max = 100)
+    private String assetTypeDescription;
+
+    @Size(max = 12)
+    private String isinCode;
+
+    @Size(max = 100)
+    private String securityName;
+
+    private Integer numberOfShares;
 
     private BigDecimal quotationPrice;
 
-    private BigDecimal numberOfUnits;
+    private Date quotationDate;
 
     private BigDecimal declaredValue;
 
     private BigDecimal verifiedValue;
 
-    @Size(max = 1)
-    private String conformityIndicator;
+    private BigDecimal participationPercentage;
 
-    public ListedSecuritiesDTO() {
+    public ListedSecuritiesDto() {
     }
 
     public Integer getPresentationYear() {
@@ -49,12 +64,12 @@ public class ListedSecuritiesDTO {
         this.presentationYear = presentationYear;
     }
 
-    public String getTaxType() {
-        return taxType;
+    public String getTaxTypeCode() {
+        return taxTypeCode;
     }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
+    public void setTaxTypeCode(String taxTypeCode) {
+        this.taxTypeCode = taxTypeCode;
     }
 
     public String getPresentationCode() {
@@ -65,12 +80,20 @@ public class ListedSecuritiesDTO {
         this.presentationCode = presentationCode;
     }
 
-    public String getTaxpayerNif() {
-        return taxpayerNif;
+    public String getCauseNif() {
+        return causeNif;
     }
 
-    public void setTaxpayerNif(String taxpayerNif) {
-        this.taxpayerNif = taxpayerNif;
+    public void setCauseNif(String causeNif) {
+        this.causeNif = causeNif;
+    }
+
+    public String getSubCauseCode() {
+        return subCauseCode;
+    }
+
+    public void setSubCauseCode(String subCauseCode) {
+        this.subCauseCode = subCauseCode;
     }
 
     public Integer getAssetSequence() {
@@ -81,12 +104,44 @@ public class ListedSecuritiesDTO {
         this.assetSequence = assetSequence;
     }
 
-    public String getAssetDescription() {
-        return assetDescription;
+    public String getAssetTypeCode() {
+        return assetTypeCode;
     }
 
-    public void setAssetDescription(String assetDescription) {
-        this.assetDescription = assetDescription;
+    public void setAssetTypeCode(String assetTypeCode) {
+        this.assetTypeCode = assetTypeCode;
+    }
+
+    public String getAssetTypeDescription() {
+        return assetTypeDescription;
+    }
+
+    public void setAssetTypeDescription(String assetTypeDescription) {
+        this.assetTypeDescription = assetTypeDescription;
+    }
+
+    public String getIsinCode() {
+        return isinCode;
+    }
+
+    public void setIsinCode(String isinCode) {
+        this.isinCode = isinCode;
+    }
+
+    public String getSecurityName() {
+        return securityName;
+    }
+
+    public void setSecurityName(String securityName) {
+        this.securityName = securityName;
+    }
+
+    public Integer getNumberOfShares() {
+        return numberOfShares;
+    }
+
+    public void setNumberOfShares(Integer numberOfShares) {
+        this.numberOfShares = numberOfShares;
     }
 
     public BigDecimal getQuotationPrice() {
@@ -97,12 +152,12 @@ public class ListedSecuritiesDTO {
         this.quotationPrice = quotationPrice;
     }
 
-    public BigDecimal getNumberOfUnits() {
-        return numberOfUnits;
+    public Date getQuotationDate() {
+        return quotationDate;
     }
 
-    public void setNumberOfUnits(BigDecimal numberOfUnits) {
-        this.numberOfUnits = numberOfUnits;
+    public void setQuotationDate(Date quotationDate) {
+        this.quotationDate = quotationDate;
     }
 
     public BigDecimal getDeclaredValue() {
@@ -121,11 +176,11 @@ public class ListedSecuritiesDTO {
         this.verifiedValue = verifiedValue;
     }
 
-    public String getConformityIndicator() {
-        return conformityIndicator;
+    public BigDecimal getParticipationPercentage() {
+        return participationPercentage;
     }
 
-    public void setConformityIndicator(String conformityIndicator) {
-        this.conformityIndicator = conformityIndicator;
+    public void setParticipationPercentage(BigDecimal participationPercentage) {
+        this.participationPercentage = participationPercentage;
     }
 }
